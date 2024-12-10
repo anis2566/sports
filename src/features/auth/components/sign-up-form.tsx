@@ -7,7 +7,6 @@ import { z } from "zod";
 import Link from "next/link";
 import { ArrowRightIcon, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,16 +34,11 @@ import { useRegister } from "@/features/auth/api/use-register";
 export const SignUpForm = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get("callbackUrl");
-
     const togglePassword = () => {
         setShowPassword((prev) => !prev);
     };
 
-    const { isPending, mutate: registerUser } = useRegister({
-        redirectUrl: callbackUrl || undefined,
-    });
+    const { isPending, mutate: registerUser } = useRegister();
 
     const form = useForm<SignUpSchemaType>({
         resolver: zodResolver(SignUpSchema),

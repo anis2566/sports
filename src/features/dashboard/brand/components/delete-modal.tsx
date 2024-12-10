@@ -20,7 +20,7 @@ export const DeleteBrandModal = () => {
     const { mutate, isPending } = useDeleteBrandApi({ onClose });
 
     const handleDelete = () => {
-        mutate(brandId);
+        mutate({ param: { id: brandId } });
     }
 
     return (

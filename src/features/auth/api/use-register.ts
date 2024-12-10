@@ -1,43 +1,44 @@
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { REGISTER_USER_ACTION } from "../server/action";
+import { client } from "@/lib/rpc";
 
-interface UseRegisterProps {
-  redirectUrl?: string;
-}
+type RequestType = InferRequestType<
+  typeof client.api.authentication.register.$post
+>["json"];
+type ResponseType = InferResponseType<
+  typeof client.api.authentication.register.$post
+>;
 
-export function useRegister({ redirectUrl }: UseRegisterProps) {
+export const useRegister = () => {
   const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: REGISTER_USER_ACTION,
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async (json) => {
+      const res = await client.api.authentication.register.$post({ json });
+      return await res.json();
+    },
     onSuccess: (data) => {
-      if (data.success) {
-        toast.success(data.success, {
-          duration: 5000,
-        });
-
-        if (redirectUrl) {
-          router.push(`/redirect?redirectUrl=${redirectUrl}`);
-        } else {
-          router.push("/");
-        }
-      }
-
-      if (data.error) {
+      if ("error" in data) {
         toast.error(data.error, {
           duration: 5000,
         });
       }
-    },
-    onError: (error) => {
-      toast.error(error.message, {
-        duration: 5000,
-      });
+
+      if ("success" in data) {
+        toast.success(data.success, {
+          duration: 5000,
+        });
+        router.push("/");
+        queryClient.invalidateQueries({ queryKey: ["current-user"] });
+      }
     },
   });
 
   return mutation;
-}
+};

@@ -37,7 +37,9 @@ export const SignInForm = () => {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl");
 
-    const { isPending, mutate: signInUser } = useLogin({ callbackUrl: callbackUrl || "/" });
+    const { isPending, mutate: signInUser } = useLogin({
+        redirectUrl: callbackUrl ? `/redirect?redirectUrl=${callbackUrl}` : "/",
+    });
 
     const togglePassword = () => {
         setShowPassword((prev) => !prev);

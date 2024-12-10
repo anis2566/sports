@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
 import { Send, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import { utapi } from 'uploadthing/client';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -22,6 +23,29 @@ import { useCreateCategory } from "../api/use-create-category"
 
 export const CategoryForm = () => {
     const { mutate, isPending } = useCreateCategory()
+
+    async function uploadFile(file: File) {
+        // Generate pre-signed URL
+        const { uploadUrl } = await utapi.createUploadUrl({
+            name: file.name,
+            type: file.type,
+        });
+
+        // Upload file
+        const response = await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': file.type,
+            },
+            body: file,
+        });
+
+        if (!response.ok) {
+            throw new Error('Upload failed');
+        }
+
+        console.log('File uploaded successfully');
+    }
 
     const form = useForm<CategorySchemaType>({
         resolver: zodResolver(CategorySchema),
@@ -75,7 +99,17 @@ export const CategoryForm = () => {
                             )}
                         />
 
-                        <FormField
+                        <input
+                            type="file"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    uploadFile(file);
+                                }
+                            }}
+                        />
+
+                        {/* <FormField
                             control={form.control}
                             name="imageUrl"
                             render={({ field }) => (
@@ -120,7 +154,7 @@ export const CategoryForm = () => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> */}
 
                         <FormField
                             control={form.control}

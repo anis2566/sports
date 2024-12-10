@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { auth } from "@/auth";
 import { SignInForm } from "@/features/auth/components/sign-in-form";
+import { getCurrent } from "@/features/auth/server/action";
 
 export const metadata: Metadata = {
     title: "TomarSports | Sign In",
@@ -10,13 +10,15 @@ export const metadata: Metadata = {
 }
 
 const SignIn = async () => {
-    const session = await auth();
+    const user = await getCurrent();
 
-    if (session?.user) {
+    if (user) {
         return redirect("/");
     }
 
-    return <SignInForm />
+    return (
+        <SignInForm />
+    )
 
 }
 

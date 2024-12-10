@@ -1,9 +1,12 @@
-import type { JWT as DefaultJWT } from "next-auth/jwt";
-import type { User as DefaultUser, Session as DefaultSession } from "next-auth";
+import type { JWT as DefaultJWT } from "@auth/core/jwt";
+import type {
+  User as DefaultUser,
+  Session as DefaultSession,
+} from "@auth/core/types";
 
 import { ROLE, STATUS } from "@/constant";
 
-declare module "next-auth" {
+declare module "@auth/core" {
   interface Session extends DefaultSession {
     role: ROLE;
     userId: string;
@@ -17,7 +20,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
+declare module "@auth/core/jwt" {
   interface JWT extends DefaultJWT {
     role: ROLE;
     userId: string;

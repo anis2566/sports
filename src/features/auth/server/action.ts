@@ -1,123 +1,31 @@
 "use server";
 
-import bcrypt from "bcryptjs";
-import { isRedirectError } from "next/dist/client/components/redirect";
-import { AuthError } from "next-auth";
+import { verify } from "hono/jwt";
+import { cookies } from "next/headers";
+import { cache } from "react";
 
-import { db } from "@/lib/db";
-import {
-  SignInSchema,
-  SignInSchemaType,
-  SignUpSchema,
-  SignUpSchemaType,
-} from "../schemas";
-import { signIn } from "@/auth";
+import { AUTH_COOKIE } from "@/constant";
+import { JWTPayload } from "@/lib/session-middleware";
 
-// REGISTER USER ACTION
-export const REGISTER_USER_ACTION = async (values: SignUpSchemaType) => {
-  const { data, success } = SignUpSchema.safeParse(values);
+export const getCurrent = cache(async () => {
+  const session = (await cookies()).get(AUTH_COOKIE);
 
-  if (!success) {
-    return {
-      error: "Invalid input values",
-    };
+  if (!session) {
+    return null;
   }
 
-  try {
-    const user = await db.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    });
+  const decodedPayload = await verify(session.value, process.env.JWT_SECRET!);
 
-    if (user) {
-      return {
-        error: "User already exists",
-      };
-    }
-
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-
-    await db.user.create({
-      data: {
-        ...data,
-        password: hashedPassword,
-      },
-    });
-
-    await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
-
-    return {
-      success: "Registered successful",
-    };
-  } catch {
-    throw new Error("Failed to register user");
-  }
-};
-
-// // SIGN IN USER ACTION
-export const SIGN_IN_USER_ACTION = async (values: SignInSchemaType) => {
-  const { data, success } = SignInSchema.safeParse(values);
-
-  if (!success) {
-    return {
-      error: "Invalid input values",
-    };
+  if (!decodedPayload) {
+    return null;
   }
 
-  try {
-    const user = await db.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    });
+  const user: JWTPayload = {
+    name: decodedPayload.name as string,
+    image: decodedPayload.image as string | null,
+    userId: decodedPayload.userId as string,
+    role: decodedPayload.role as string,
+  };
 
-    if (!user) {
-      return {
-        error: "Invalid credentials",
-      };
-    }
-
-    const isPasswordValid = await bcrypt.compare(
-      data.password,
-      user.password ?? ""
-    );
-
-    if (!isPasswordValid) {
-      return {
-        error: "Invalid credentials",
-      };
-    }
-
-    await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
-
-    return {
-      success: "Signed in successful",
-    };
-  } catch (error) {
-    if (isRedirectError(error)) {
-      throw error;
-    }
-
-    if (error instanceof Error) {
-      const { type, cause } = error as AuthError;
-
-      switch (type) {
-        case "CredentialsSignin":
-          throw new Error("Invalid credentials");
-        case "CallbackRouteError":
-          throw new Error(cause?.err?.toString());
-        default:
-          throw new Error("Something went wrong");
-      }
-    }
-  }
-};
+  return user;
+});

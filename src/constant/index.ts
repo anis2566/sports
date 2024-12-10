@@ -1,3 +1,5 @@
+export const AUTH_COOKIE = "access-token"
+
 export enum ROLE {
   User = "User",
   Admin = "Admin",

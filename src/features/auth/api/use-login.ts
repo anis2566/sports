@@ -1,38 +1,56 @@
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import { SIGN_IN_USER_ACTION } from "../server/action";
+import { client } from "@/lib/rpc";
 
-interface UseLoginProps {
-  callbackUrl: string;
+type RequestType = InferRequestType<typeof client.api.auth.login.$post>["json"];
+type ResponseType = InferResponseType<typeof client.api.auth.login.$post>;
+
+interface LoginResponse {
+  redirectUrl: string;
 }
 
-export function useLogin({ callbackUrl }: UseLoginProps) {
+export const useLogin = ({ redirectUrl }: LoginResponse) => {
   const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: SIGN_IN_USER_ACTION,
-    onSuccess: (data) => {
-      if (data?.error) {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async (json) => {
+      const res = await client.api.auth.login.$post({ json });
+      return await res.json();
+    },
+    onSuccess: async (data) => {
+      if ("error" in data) {
         toast.error(data.error, {
           duration: 5000,
         });
       }
 
-      if (data?.success) {
+      if ("success" in data) {
         toast.success(data.success, {
           duration: 5000,
         });
-        router.push(`/redirect?redirectUrl=${callbackUrl}`);
+        queryClient.invalidateQueries({ queryKey: ["current"] });
+
+        if (redirectUrl) {
+          router.push(`/redirect?redirectUrl=${redirectUrl}`);
+        } else {
+          router.push("/dashboard");
+        }
       }
     },
-    onError: (error) => {
-      toast.error(error.message, {
+    onSettled: () => {
+      router.refresh();
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
         duration: 5000,
       });
     },
   });
 
   return mutation;
-}
+};

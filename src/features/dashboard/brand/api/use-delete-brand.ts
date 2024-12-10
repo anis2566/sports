@@ -1,22 +1,38 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InferRequestType, InferResponseType } from "hono";
 import { toast } from "sonner";
 
-import { DELETE_BRAND_ACTION } from "../server/action";
+import { client } from "@/lib/rpc";
 
-interface UseDeleteBrandProps {
+type RequestType = InferRequestType<
+  (typeof client.api.brand.delete)[":id"]["$delete"]
+>;
+type ResponseType = InferResponseType<
+  (typeof client.api.brand.delete)[":id"]["$delete"]
+>;
+
+interface Props {
   onClose: () => void;
 }
 
-export const useDeleteBrand = ({ onClose }: UseDeleteBrandProps) => {
-  return useMutation({
-    mutationFn: DELETE_BRAND_ACTION,
+export const useDeleteBrand = ({ onClose }: Props) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async ({ param }) => {
+      const res = await client.api.brand.delete[":id"]["$delete"]({
+        param: { id: param.id },
+      });
+      return await res.json();
+    },
     onSuccess: (data) => {
-      if (data.success) {
+      if ("success" in data) {
         toast.success(data.success, { duration: 5000 });
+        queryClient.invalidateQueries({ queryKey: ["brand"] });
         onClose();
       }
 
-      if (data.error) {
+      if ("error" in data) {
         toast.error(data.error, { duration: 5000 });
       }
     },
@@ -24,4 +40,6 @@ export const useDeleteBrand = ({ onClose }: UseDeleteBrandProps) => {
       toast.error(error.message, { duration: 5000 });
     },
   });
+
+  return mutation;
 };

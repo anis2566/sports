@@ -35,7 +35,7 @@ export const EditBrandForm = ({ brand }: Props) => {
     })
 
     const onSubmit = (values: BrandSchemaType) => {
-        mutate({ id: brand.id, values })
+        mutate({ json: values, param: { id: brand.id } })
     }
 
     return (

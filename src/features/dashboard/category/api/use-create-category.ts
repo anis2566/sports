@@ -1,23 +1,34 @@
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InferResponseType, InferRequestType } from "hono";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-import { CREATE_CATEGORY_ACTION } from "../server/action";
+import { client } from "@/lib/rpc";
+
+type ResponseType = InferResponseType<typeof client.api.category.create.$post>;
+type RequestType = InferRequestType<
+  typeof client.api.category.create.$post
+>["json"];
 
 export const useCreateCategory = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: CREATE_CATEGORY_ACTION,
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async (json) => {
+      const res = await client.api.category.create.$post({ json });
+      return await res.json();
+    },
     onSuccess: (data) => {
-      if (data.success) {
+      if ("success" in data) {
         toast.success(data.success, {
           duration: 5000,
         });
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
         router.push("/dashboard/category");
       }
 
-      if (data.error) {
+      if ("error" in data) {
         toast.error(data.error, {
           duration: 5000,
         });
@@ -29,4 +40,6 @@ export const useCreateCategory = () => {
       });
     },
   });
+
+  return mutation;
 };

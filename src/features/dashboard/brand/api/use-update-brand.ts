@@ -1,23 +1,39 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { InferRequestType, InferResponseType } from "hono";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { EDIT_BRAND_ACTION } from "../server/action";
+import { client } from "@/lib/rpc";
+
+type RequestType = InferRequestType<
+  (typeof client.api.brand.edit)[":id"]["$put"]
+>;
+type ResponseType = InferResponseType<
+  (typeof client.api.brand.edit)[":id"]["$put"]
+>;
 
 export const useUpdateBrand = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: EDIT_BRAND_ACTION,
+  const mutation = useMutation<ResponseType, Error, RequestType>({
+    mutationFn: async ({ json, param }) => {
+      const res = await client.api.brand.edit[":id"]["$put"]({
+        json,
+        param: { id: param.id },
+      });
+      return await res.json();
+    },
     onSuccess: (data) => {
-      if (data.success) {
+      if ("success" in data) {
         toast.success(data.success, {
           duration: 5000,
         });
+        queryClient.invalidateQueries({ queryKey: ["brand"] });
         router.push("/dashboard/brand");
       }
 
-      if (data.error) {
+      if ("error" in data) {
         toast.error(data.error, {
           duration: 5000,
         });
@@ -29,4 +45,6 @@ export const useUpdateBrand = () => {
       });
     },
   });
+
+  return mutation;
 };
