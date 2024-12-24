@@ -4,12 +4,11 @@ import { z } from "zod";
 
 import { CategorySchema } from "../schemas";
 import { db } from "@/lib/db";
-import { isAdmin, sessionMiddleware } from "@/lib/session-middleware";
+import { isAdmin } from "@/lib/session-middleware";
 
 const app = new Hono()
   .post(
     "/create",
-    sessionMiddleware,
     isAdmin,
     zValidator("json", CategorySchema),
     async (c) => {
@@ -46,7 +45,6 @@ const app = new Hono()
   )
   .put(
     "/edit/:id",
-    sessionMiddleware,
     isAdmin,
     zValidator("param", z.object({ id: z.string() })),
     zValidator("json", CategorySchema),
@@ -78,7 +76,6 @@ const app = new Hono()
   )
   .delete(
     "/delete/:id",
-    sessionMiddleware,
     isAdmin,
     zValidator("param", z.object({ id: z.string() })),
     async (c) => {
@@ -98,46 +95,47 @@ const app = new Hono()
         return c.json({ error: "Failed to delete category" }, 500);
       }
     }
+  )
+  .get(
+    "/",
+    zValidator(
+      "query",
+      z.object({
+        query: z.string().optional(),
+        page: z.string().optional(),
+        limit: z.string().optional(),
+        sort: z.string().optional(),
+        status: z.string().optional(),
+      })
+    ),
+    async (c) => {
+      const { query, page, limit, sort, status } = await c.req.valid("query");
+
+      const pageNumber = parseInt(page || "1");
+      const limitNumber = parseInt(limit || "5");
+
+      const [categories, totalCount] = await Promise.all([
+        db.category.findMany({
+          where: {
+            ...(query && { name: { contains: query, mode: "insensitive" } }),
+            ...(status && { status: status }),
+          },
+          orderBy: {
+            ...(sort === "asc" ? { createdAt: "asc" } : { createdAt: "desc" }),
+          },
+          skip: (pageNumber - 1) * limitNumber,
+          take: limitNumber,
+        }),
+        db.category.count({
+          where: {
+            ...(query && { name: { contains: query, mode: "insensitive" } }),
+            ...(status && { status: status }),
+          },
+        }),
+      ]);
+
+      return c.json({ categories, totalCount });
+    }
   );
-//   .get(
-//     "/",
-//     zValidator(
-//       "query",
-//       z.object({
-//         query: z.string().optional(),
-//         page: z.string().optional(),
-//         limit: z.string().optional(),
-//         sort: z.string().optional(),
-//       })
-//     ),
-//     async (c) => {
-//       const { query, page, limit, sort } = await c.req.valid("query");
-
-//       const pageNumber = parseInt(page || "1");
-//       const limitNumber = parseInt(limit || "5");
-
-//       const [brands, totalCount] = await Promise.all([
-//         db.brand.findMany({
-//           where: {
-//             ...(query && { name: { contains: query, mode: "insensitive" } }),
-//           },
-//           orderBy: {
-//             ...(sort === "desc" ? { createdAt: "desc" } : { createdAt: "asc" }),
-//           },
-//           skip: (pageNumber - 1) * limitNumber,
-//           take: limitNumber,
-//         }),
-//         db.brand.count({
-//           where: {
-//             ...(query && { name: { contains: query, mode: "insensitive" } }),
-//           },
-//         }),
-//       ]);
-
-//       console.log(brands, totalCount);
-
-//       return c.json({ brands, totalCount });
-//     }
-//   );
 
 export default app;

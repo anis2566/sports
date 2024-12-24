@@ -45,12 +45,26 @@ export const sessionMiddleware = createMiddleware<AdditionalContext>(
   }
 );
 
-export const isAdmin = createMiddleware(async (c, next) => {
-  const user = c.get("user");
+export const isAdmin = createMiddleware<AdditionalContext>(
+  async (c, next) => {
+    const session = getCookie(c, AUTH_COOKIE);
 
-  if (user?.role !== ROLE.Admin) {
-    return c.json({ error: "Unauthorized" }, 401);
+    if (!session) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const decodedPayload = await verify(session, process.env.JWT_SECRET!);
+
+    if (!decodedPayload) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    const { role } = decodedPayload;
+
+    if (role !== ROLE.Admin) {
+      return c.json({ error: "Unauthorized" }, 401);
+    }
+
+    await next();
   }
-
-  await next();
-});
+);

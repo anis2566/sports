@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
 import { Send, Trash2 } from "lucide-react"
-import { toast } from "sonner"
 import { Category } from "@prisma/client"
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -15,10 +14,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TagsInput } from "@/components/ui/tag-input"
 
-import { UploadButton } from "@/lib/uploadthing"
 import { LoadingButton } from "@/components/loading-button"
 import { CategorySchema, CategorySchemaType } from "../schemas"
 import { CATEGORY_STATUS } from "@/constant"
+import { ImageUploader } from "@/components/ui/image-uploader"
 import { useUpdateCategory } from "../api/use-update-category"
 
 interface EditCategoryFormProps {
@@ -40,7 +39,7 @@ export const EditCategoryForm = ({ category }: EditCategoryFormProps) => {
     })
 
     const onSubmit = (values: CategorySchemaType) => {
-        mutate({ id: category.id, values })
+        mutate({ param: { id: category.id }, json: values })
     }
 
     return (
@@ -86,42 +85,27 @@ export const EditCategoryForm = ({ category }: EditCategoryFormProps) => {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Image</FormLabel>
-                                    <FormControl>
-                                        {form.getValues("imageUrl") ? (
+                                    {
+                                        form.watch("imageUrl") ? (
                                             <div className="relative">
-                                                <Image
-                                                    alt="Upload"
-                                                    width={80}
-                                                    height={80}
-                                                    className="h-14 w-14 rounded-full"
-                                                    src={form.getValues("imageUrl")}
-                                                    onError={() => form.setValue("imageUrl", "")}
-                                                />
-                                                <Button
-                                                    className="absolute right-0 top-0"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => form.setValue("imageUrl", "")}
-                                                    type="button"
-                                                    disabled={isPending}
-                                                >
-                                                    <Trash2 className="text-rose-500" />
+                                                <div className="relative aspect-square max-h-[100px]">
+                                                    <Image src={form.getValues("imageUrl")} alt="Profile" fill className="object-contain rounded-full" />
+                                                </div>
+                                                <Button type="button" variant="destructive" className="absolute right-0 top-0" onClick={() => form.setValue("imageUrl", "")}>
+                                                    <Trash2 className="h-5 w-5" />
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <UploadButton
-                                                endpoint="imageUploader"
-                                                onClientUploadComplete={(res) => {
-                                                    field.onChange(res[0].url);
-                                                    toast.success("Image uploaded");
-                                                }}
-                                                onUploadError={() => {
-                                                    toast.error("Image upload failed");
-                                                }}
-                                                disabled={isPending}
-                                            />
-                                        )}
-                                    </FormControl>
+                                            <FormControl>
+                                                <ImageUploader
+                                                    preset="category"
+                                                    onChange={values => {
+                                                        field.onChange(values[0])
+                                                    }}
+                                                />
+                                            </FormControl>
+                                        )
+                                    }
                                     <FormMessage />
                                 </FormItem>
                             )}

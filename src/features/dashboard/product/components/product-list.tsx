@@ -10,50 +10,64 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 import { EmptyStat } from "@/components/empty-stat"
-import { useDeleteBrand } from "@/hooks/use-brand"
-import { useGetBrand } from "../api/use-get-brand"
+import { useDeleteProduct } from "@/hooks/use-product"
+import { useGetProducts } from "../api/use-get-products"
 import { CustomPagination } from "@/components/custom-pagination"
+import { PRODUCT_STATUS } from "@/constant"
 import { Header } from "./header"
 
-export const BrandList = () => {
-    const { onOpen } = useDeleteBrand()
+export const ProductList = () => {
+    const { onOpen } = useDeleteProduct()
 
     const searchParams = useSearchParams()
     const limit = parseInt(searchParams.get("limit") || "5")
 
-    const { data, isLoading } = useGetBrand()
+    const { data, isLoading } = useGetProducts()
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Brand</CardTitle>
-                <CardDescription>Manage your brands here</CardDescription>
+                <CardTitle>Product</CardTitle>
+                <CardDescription>Manage your products here</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <Header />
-                {isLoading ? <BrandListSkeleton /> : (
+                {isLoading ? <ProductListSkeleton /> : (
                     <Table>
                         <TableHeader>
                             <TableRow className="bg-accent hover:bg-accent/80">
                                 <TableHead>Image</TableHead>
                                 <TableHead>Name</TableHead>
-                                <TableHead>Products</TableHead>
+                                <TableHead>Category</TableHead>
+                                <TableHead>Brand</TableHead>
+                                <TableHead>Stock</TableHead>
+                                <TableHead>Variants</TableHead>
+                                <TableHead>Status</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data?.brands.map((brand) => (
-                                <TableRow key={brand.id}>
+                            {data?.products.map((product) => (
+                                <TableRow key={product.id}>
                                     <TableCell>
                                         <Avatar>
-                                            <AvatarImage src={brand.imageUrl || ""} />
-                                            <AvatarFallback>{brand.name.charAt(0)}</AvatarFallback>
+                                            <AvatarImage src={product.variants[0].imageUrl[0] || ""} />
+                                            <AvatarFallback>{product.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                     </TableCell>
-                                    <TableCell>{brand.name}</TableCell>
-                                    <TableCell>{5}</TableCell>
+                                    <TableCell>{product.name}</TableCell>
+                                    <TableCell>{product.category.name}</TableCell>
+                                    <TableCell>{product.brand.name}</TableCell>
+                                    <TableCell>{product.totalStock}</TableCell>
+                                    <TableCell>{product.variants.length}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={product.status === PRODUCT_STATUS.Active ? "default" : "destructive"} className="rounded-full">
+                                            {product.status}
+                                        </Badge>
+                                    </TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -63,12 +77,12 @@ export const BrandList = () => {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem asChild>
-                                                    <Link href={`/dashboard/brand/edit/${brand.id}`} className="flex items-center gap-x-3">
+                                                    <Link href={`/dashboard/product/edit/${product.id}`} className="flex items-center gap-x-3">
                                                         <Edit className="w-5 h-5" />
                                                         <p>Edit</p>
                                                     </Link>
                                                 </DropdownMenuItem>
-                                                <DropdownMenuItem className="flex items-center gap-x-3 text-rose-500 group" onClick={() => onOpen(brand.id)}>
+                                                <DropdownMenuItem className="flex items-center gap-x-3 text-rose-500 group" onClick={() => onOpen(product.id)}>
                                                     <Trash2 className="w-5 h-5 group-hover:text-rose-600" />
                                                     <p className="group-hover:text-rose-600">Delete</p>
                                                 </DropdownMenuItem>
@@ -80,7 +94,7 @@ export const BrandList = () => {
                         </TableBody>
                     </Table>
                 )}
-                {!isLoading && data?.brands.length === 0 && <EmptyStat title="No brands found" />}
+                {!isLoading && data?.products.length === 0 && <EmptyStat title="No products found" />}
                 <CustomPagination pageSize={limit} totalCount={data?.totalCount || 0} />
             </CardContent>
         </Card>
@@ -88,20 +102,28 @@ export const BrandList = () => {
 }
 
 
-export const BrandListSkeleton = () => {
+export const ProductListSkeleton = () => {
     return (
         <Table>
             <TableHeader>
                 <TableRow className="bg-accent hover:bg-accent/80">
                     <TableHead>Image</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Products</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Brand</TableHead>
+                    <TableHead>Stock</TableHead>
+                    <TableHead>Variants</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {Array.from({ length: 5 }).map((_, index) => (
                     <TableRow key={index}>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
                         <TableCell><Skeleton className="w-full h-10" /></TableCell>
                         <TableCell><Skeleton className="w-full h-10" /></TableCell>
                         <TableCell><Skeleton className="w-full h-10" /></TableCell>

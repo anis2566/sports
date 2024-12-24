@@ -4,8 +4,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image"
 import { Send, Trash2 } from "lucide-react"
-import { toast } from "sonner"
-import { utapi } from 'uploadthing/client';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -15,37 +13,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TagsInput } from "@/components/ui/tag-input"
 
-import { UploadButton } from "@/lib/uploadthing"
 import { LoadingButton } from "@/components/loading-button"
 import { CategorySchema, CategorySchemaType } from "../schemas"
 import { CATEGORY_STATUS } from "@/constant"
 import { useCreateCategory } from "../api/use-create-category"
+import { ImageUploader } from "@/components/ui/image-uploader"
 
 export const CategoryForm = () => {
     const { mutate, isPending } = useCreateCategory()
-
-    async function uploadFile(file: File) {
-        // Generate pre-signed URL
-        const { uploadUrl } = await utapi.createUploadUrl({
-            name: file.name,
-            type: file.type,
-        });
-
-        // Upload file
-        const response = await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': file.type,
-            },
-            body: file,
-        });
-
-        if (!response.ok) {
-            throw new Error('Upload failed');
-        }
-
-        console.log('File uploaded successfully');
-    }
 
     const form = useForm<CategorySchemaType>({
         resolver: zodResolver(CategorySchema),
@@ -99,62 +74,37 @@ export const CategoryForm = () => {
                             )}
                         />
 
-                        <input
-                            type="file"
-                            onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                    uploadFile(file);
-                                }
-                            }}
-                        />
-
-                        {/* <FormField
+                        <FormField
                             control={form.control}
                             name="imageUrl"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Image</FormLabel>
-                                    <FormControl>
-                                        {form.getValues("imageUrl") ? (
+                                    {
+                                        form.watch("imageUrl") ? (
                                             <div className="relative">
-                                                <Image
-                                                    alt="Upload"
-                                                    width={80}
-                                                    height={80}
-                                                    className="h-14 w-14 rounded-full"
-                                                    src={form.getValues("imageUrl")}
-                                                    onError={() => form.setValue("imageUrl", "")}
-                                                />
-                                                <Button
-                                                    className="absolute right-0 top-0"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => form.setValue("imageUrl", "")}
-                                                    type="button"
-                                                    disabled={isPending}
-                                                >
-                                                    <Trash2 className="text-rose-500" />
+                                                <div className="relative aspect-square max-h-[100px]">
+                                                    <Image src={form.getValues("imageUrl")} alt="Profile" fill className="object-contain rounded-full" />
+                                                </div>
+                                                <Button type="button" variant="destructive" className="absolute right-0 top-0" onClick={() => form.setValue("imageUrl", "")}>
+                                                    <Trash2 className="h-5 w-5" />
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <UploadButton
-                                                endpoint="imageUploader"
-                                                onClientUploadComplete={(res) => {
-                                                    field.onChange(res[0].url);
-                                                    toast.success("Image uploaded");
-                                                }}
-                                                onUploadError={() => {
-                                                    toast.error("Image upload failed");
-                                                }}
-                                                disabled={isPending}
-                                            />
-                                        )}
-                                    </FormControl>
+                                            <FormControl>
+                                                <ImageUploader
+                                                    preset="category"
+                                                    onChange={values => {
+                                                        field.onChange(values[0])
+                                                    }}
+                                                />
+                                            </FormControl>
+                                        )
+                                    }
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        /> */}
+                        />
 
                         <FormField
                             control={form.control}

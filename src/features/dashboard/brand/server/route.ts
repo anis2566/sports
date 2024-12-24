@@ -4,12 +4,11 @@ import { z } from "zod";
 
 import { BrandSchema } from "../schemas";
 import { db } from "@/lib/db";
-import { isAdmin, sessionMiddleware } from "@/lib/session-middleware";
+import { isAdmin } from "@/lib/session-middleware";
 
 const app = new Hono()
   .post(
     "/create",
-    sessionMiddleware,
     isAdmin,
     zValidator("json", BrandSchema),
     async (c) => {
@@ -42,7 +41,6 @@ const app = new Hono()
   )
   .put(
     "/edit/:id",
-    sessionMiddleware,
     isAdmin,
     zValidator("param", z.object({ id: z.string() })),
     zValidator("json", BrandSchema),
@@ -72,7 +70,6 @@ const app = new Hono()
   )
   .delete(
     "/delete/:id",
-    sessionMiddleware,
     isAdmin,
     zValidator("param", z.object({ id: z.string() })),
     async (c) => {
@@ -116,7 +113,7 @@ const app = new Hono()
             ...(query && { name: { contains: query, mode: "insensitive" } }),
           },
           orderBy: {
-            ...(sort === "desc" ? { createdAt: "desc" } : { createdAt: "asc" }),
+            ...(sort === "asc" ? { createdAt: "asc" } : { createdAt: "desc" }),
           },
           skip: (pageNumber - 1) * limitNumber,
           take: limitNumber,
@@ -127,8 +124,6 @@ const app = new Hono()
           },
         }),
       ]);
-
-      console.log(brands, totalCount);
 
       return c.json({ brands, totalCount });
     }

@@ -11,25 +11,25 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { LoadingButton } from "@/components/loading-button";
-import { useDeleteCategory } from "@/hooks/use-category";
-import { useDeleteCategory as useDeleteCategoryApi } from "../api/use-delete-category";
+import { useDeleteProduct as useDeleteProductApi } from "../api/use-delete-product";
+import { useDeleteProduct } from "@/hooks/use-product";
 
-export const DeleteCategoryModal = () => {
-    const { isOpen, categoryId, onClose } = useDeleteCategory();
+export const DeleteProductModal = () => {
+    const { isOpen, productId, onClose } = useDeleteProduct();
 
-    const { mutate, isPending } = useDeleteCategoryApi({ onClose })
+    const { mutate, isPending } = useDeleteProductApi({ onClose });
 
     const handleDelete = () => {
-        mutate({ param: { id: categoryId } });
+        mutate({ param: { id: productId } });
     }
 
     return (
-        <AlertDialog open={isOpen && !!categoryId} onOpenChange={onClose}>
+        <AlertDialog open={isOpen && !!productId} onOpenChange={onClose}>
             <AlertDialogContent>
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your category
+                        This action cannot be undone. This will permanently delete your product
                         and remove your data from servers.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

@@ -1,21 +1,19 @@
 import { Metadata } from "next"
 import Link from "next/link"
-import { Suspense } from "react"
 
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 import { ContentLayout } from "@/features/dashboard/components/content-layout"
-import { CategoryList } from "@/features/dashboard/category/components/category-list"
+import { ProductList } from "@/features/dashboard/product/components/product-list"
 
 export const metadata: Metadata = {
-    title: "Dashboard | Category",
-    description: "Category",
+    title: "Dashboard | Product",
+    description: "Product",
 }
 
-const Category = async () => {
-
+const Product = async () => {
     return (
-        <ContentLayout title="Category">
+        <ContentLayout title="Product">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -25,16 +23,14 @@ const Category = async () => {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Category</BreadcrumbPage>
+                        <BreadcrumbPage>Product</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <Suspense fallback={<div>Loading...</div>}>
-                <CategoryList />
-            </Suspense>
+            <ProductList />
         </ContentLayout>
     )
 }
 
-export default Category
+export default Product
