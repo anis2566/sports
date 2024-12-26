@@ -2,7 +2,7 @@
 
 import { useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader, SearchIcon, Send, Trash2 } from "lucide-react"
+import { Loader, Minus, Plus, SearchIcon, Send, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -21,11 +21,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-    Collapsible,
-    CollapsibleContent,
-} from "@/components/ui/collapsible"
 
 import { ProductSchema, ProductSchemaType } from "../schema"
 import { useGetCategoryForSelect } from "../api/use-get-category-for-select"
@@ -38,7 +33,6 @@ import { LoadingButton } from "@/components/loading-button"
 import { useCreateProduct } from "../api/use-create-product"
 
 export const ProductForm = () => {
-    const [hasDiscount, setHasDiscount] = useState<boolean>(false)
     const [categoryQuery, setCategoryQuery] = useState<string>("")
     const [brandQuery, setBrandQuery] = useState<string>("")
 
@@ -91,6 +85,7 @@ export const ProductForm = () => {
         resolver: zodResolver(ProductSchema),
         defaultValues: {
             name: "",
+            shortDescription: "",
             description: "",
             brandId: "",
             categoryId: "",
@@ -99,7 +94,7 @@ export const ProductForm = () => {
                 {
                     name: "",
                     stock: 0,
-                    color: "",
+                    colors: [],
                     images: [],
                     price: 0,
                     discountPrice: 0,
@@ -138,6 +133,20 @@ export const ProductForm = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} disabled={isPending} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="shortDescription"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Short Description</FormLabel>
                                         <FormControl>
                                             <Input {...field} disabled={isPending} />
                                         </FormControl>
@@ -310,18 +319,60 @@ export const ProductForm = () => {
 
                                     <FormField
                                         control={form.control}
-                                        name={`variants.${index}.color`}
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-col gap-y-2">
-                                                <FormLabel>Color</FormLabel>
-                                                <ColorPicker
-                                                    value={field.value || "#FFFFFF"}
-                                                    onChange={field.onChange}
-                                                    disabled={isPending}
-                                                />
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
+                                        name={`variants.${index}.colors`}
+                                        render={({ field }) => {
+                                            const addColor = () => {
+                                                const currentColors = field.value || [];
+                                                const newColor = "#FFFFFF";
+                                                field.onChange([...currentColors, newColor]);
+                                            };
+
+                                            return (
+                                                <FormItem className="flex flex-col gap-y-2">
+                                                    <FormLabel>Color</FormLabel>
+                                                    <div className="flex flex-col gap-y-2">
+                                                        {(field.value || []).map((color, colorIndex) => (
+                                                            <div key={colorIndex} className="flex items-center gap-x-2">
+                                                                <ColorPicker
+                                                                    value={color}
+                                                                    onChange={(newColor) => {
+                                                                        const updatedColors = field.value ? [...field.value] : [];
+                                                                        updatedColors[colorIndex] = newColor;
+                                                                        field.onChange(updatedColors);
+                                                                    }}
+                                                                    disabled={isPending}
+                                                                />
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="outline"
+                                                                    size="icon"
+                                                                    onClick={() => {
+                                                                        const updatedColors = field.value ? field.value.filter(
+                                                                            (_, i) => i !== colorIndex
+                                                                        ) : []
+                                                                        field.onChange(updatedColors);
+                                                                    }}
+                                                                    disabled={isPending}
+                                                                >
+                                                                    <Minus className="h-5 w-5" />
+                                                                </Button>
+                                                            </div>
+                                                        ))}
+
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="icon"
+                                                            onClick={addColor}
+                                                            disabled={isPending}
+                                                        >
+                                                            <Plus className="h-5 w-5" />
+                                                        </Button>
+                                                    </div>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            );
+                                        }}
                                     />
 
                                     <FormField
@@ -352,35 +403,19 @@ export const ProductForm = () => {
                                         )}
                                     />
 
-                                    <div className="space-y-2">
-                                        <div className="flex items-center space-x-2">
-                                            <Checkbox id="terms" checked={hasDiscount} onCheckedChange={() => setHasDiscount(!hasDiscount)} disabled={isPending} />
-                                            <label
-                                                htmlFor="terms"
-                                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                            >
-                                                Has Discount?
-                                            </label>
-                                        </div>
-
-                                        <Collapsible open={hasDiscount}>
-                                            <CollapsibleContent>
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`variants.${index}.discountPrice`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Discount Price</FormLabel>
-                                                            <FormControl>
-                                                                <Input {...field} type="number" onChange={(e) => field.onChange(Number(e.target.value))} disabled={isPending} />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </CollapsibleContent>
-                                        </Collapsible>
-                                    </div>
+                                    <FormField
+                                        control={form.control}
+                                        name={`variants.${index}.discountPrice`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Discount Price</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} type="number" onChange={(e) => field.onChange(Number(e.target.value))} disabled={isPending} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
                                     <FormField
                                         control={form.control}
@@ -431,7 +466,7 @@ export const ProductForm = () => {
                                     <Button type="button" variant="outline" onClick={() => append({
                                         name: "",
                                         stock: 0,
-                                        color: "",
+                                        colors: [],
                                         images: [],
                                         price: 0,
                                         discountPrice: 0,

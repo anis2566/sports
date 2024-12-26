@@ -7,10 +7,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { client } from "@/lib/rpc";
 
 type RequestType = InferRequestType<
-  typeof client.api.authentication.register.$post
+  typeof client.api.auth.register.$post
 >["json"];
 type ResponseType = InferResponseType<
-  typeof client.api.authentication.register.$post
+  typeof client.api.auth.register.$post
 >;
 
 export const useRegister = () => {
@@ -20,7 +20,7 @@ export const useRegister = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
-      const res = await client.api.authentication.register.$post({ json });
+      const res = await client.api.auth.register.$post({ json });
       return await res.json();
     },
     onSuccess: (data) => {

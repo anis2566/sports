@@ -75,19 +75,20 @@ const app = new Hono()
                 const variantsData = body.variants.map((variant) => ({
                     name: variant.name,
                     stock: variant.stock,
-                    color: variant.color || null,
+                    colors: variant.colors,
                     price: variant.price,
                     discount: variant.discountPrice && variant.discountPrice > 0 ? (variant.price - variant.discountPrice) / variant.price : 0,
-                    discountPrice: variant.discountPrice || null,
-                    imageUrl: variant.images || [],
+                    discountPrice: variant.discountPrice,
+                    images: variant.images,
                 }));
 
                 await db.product.create({
                     data: {
                         name: body.name,
+                        shortDescription: body.shortDescription,
                         description: body.description,
                         totalStock,
-                        tags: body.tags || [],
+                        tags: body.tags,
                         brandId: body.brandId,
                         categoryId: body.categoryId,
                         variants: {
@@ -99,8 +100,7 @@ const app = new Hono()
                 });
 
                 return c.json({ success: "Product created successfully" });
-            } catch (error) {
-                console.error("Error creating product:", error);
+            } catch {
                 return c.json({ error: "Failed to create product" }, 500);
             }
         }
@@ -122,7 +122,7 @@ const app = new Hono()
                 await db.product.delete({ where: { id } });
 
                 return c.json({ success: "Product deleted" }, 200);
-            } catch (error) {
+            } catch {
                 return c.json({ error: "Failed to delete product" }, 500);
             }
         }
@@ -206,6 +206,47 @@ const app = new Hono()
             return c.json({ products, totalCount });
         }
     )
-
+    .get(
+        "/relatedProducts/:id",
+        zValidator("param", z.object({ id: z.string() })),
+        async (c) => {
+            const id = await c.req.param("id")
+            const product = await db.product.findMany({
+                where: {
+                    categoryId: id
+                },
+                include: {
+                    variants: true,
+                    category: true
+                },
+                orderBy: {
+                    totalSold: "desc"
+                },
+                take: 10
+            })
+            return c.json(product)
+        }
+    )
+    .get(
+        "/similarCategoryProducts/:id",
+        zValidator("param", z.object({ id: z.string() })),
+        async (c) => {
+            const id = await c.req.param("id")
+            const product = await db.product.findMany({
+                where: {
+                    categoryId: id
+                },
+                include: {
+                    variants: true,
+                    category: true
+                },
+                orderBy: {
+                    createdAt: "desc"
+                },
+                take: 10
+            })
+            return c.json(product)
+        }
+    )
 
 export default app

@@ -20,11 +20,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { useLogout } from "@/features/auth/api/use-logout";
 import { useCurrent } from "@/features/auth/api/use-current";
 
 export function UserNav() {
-    const { data: user } = useCurrent();
+    const { data } = useCurrent();
 
     const { mutate: logout } = useLogout();
 
@@ -43,9 +44,9 @@ export function UserNav() {
                                 className="relative h-8 w-8 rounded-full"
                             >
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src={user?.image || ""} />
+                                    <AvatarImage src={data?.user?.image || ""} />
                                     <AvatarFallback className="bg-transparent">
-                                        {user?.name?.charAt(0)}
+                                        {data?.user?.name?.charAt(0)}
                                     </AvatarFallback>
                                 </Avatar>
                             </Button>
@@ -59,10 +60,10 @@ export function UserNav() {
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
-                            {user?.name}
+                            {data?.user?.name}
                         </p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            {user?.name}
+                            {data?.user?.name}
                         </p>
                     </div>
                 </DropdownMenuLabel>

@@ -38,7 +38,7 @@ const app = new Hono()
         });
 
         return c.json({ success: "Category created" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to create category" }, 500);
       }
     }
@@ -69,7 +69,7 @@ const app = new Hono()
         });
 
         return c.json({ success: "Category edited" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to edit category" }, 500);
       }
     }
@@ -91,7 +91,7 @@ const app = new Hono()
         await db.category.delete({ where: { id } });
 
         return c.json({ success: "Category deleted" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to delete category" }, 500);
       }
     }

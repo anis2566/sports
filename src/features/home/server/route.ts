@@ -1,9 +1,13 @@
+import { CATEGORY_STATUS, PRODUCT_STATUS } from "@/constant";
 import { db } from "@/lib/db";
 import { Hono } from "hono";
 
 const app = new Hono()
   .get("/categories", async (c) => {
     const categories = await db.category.findMany({
+      where: {
+        status: CATEGORY_STATUS.Active
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -15,6 +19,9 @@ const app = new Hono()
   })
   .get("/topCategories", async (c) => {
     const categories = await db.category.findMany({
+      where: {
+        status: CATEGORY_STATUS.Active
+      },
       orderBy: {
         products: {
           _count: "desc",
@@ -49,6 +56,9 @@ const app = new Hono()
   })
   .get("/trending", async (c) => {
     const products = await db.product.findMany({
+      where: {
+        status: PRODUCT_STATUS.Active
+      },
       include: {
         category: true,
         variants: true,
@@ -62,6 +72,120 @@ const app = new Hono()
     return c.json({
       products,
     });
-  });
+  })
+  .get(
+    "/forYou",
+    async (c) => {
+      const products = await db.product.findMany({
+        where: {
+          // totalSold: {
+          //   gt: 0,
+          // },
+          status: PRODUCT_STATUS.Active
+        },
+        include: {
+          category: true,
+          variants: true,
+        },
+        orderBy: {
+          rating: "asc",
+        },
+        take: 10,
+      });
+
+      return c.json({
+        products,
+      });
+    })
+  .get(
+    "/discount",
+    async (c) => {
+      const products = await db.product.findMany({
+        where: {
+          status: PRODUCT_STATUS.Active,
+          // variants: {
+          //   some: {
+          //     discount: {
+          //       gt: 0,
+          //     },
+          //   },
+          // },
+        },
+        include: {
+          category: true,
+          variants: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 10,
+      });
+
+      return c.json({
+        products,
+      });
+    }
+  )
+  .get(
+    "/featuredCategories",
+    async (c) => {
+      const categories = await db.category.findMany({
+        where: {
+          status: CATEGORY_STATUS.Active,
+          // isFeatured: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 10,
+      });
+      return c.json({
+        categories,
+      });
+    }
+  )
+  .get(
+    "/recentlyAdded",
+    async (c) => {
+      const products = await db.product.findMany({
+        where: {
+          status: PRODUCT_STATUS.Active,
+        },
+        include: {
+          category: true,
+          variants: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+        take: 10,
+      });
+      return c.json({
+        products,
+      });
+    }
+  )
+  .get(
+    "/bestSelling",
+    async (c) => {
+      const products = await db.product.findMany({
+        where: {
+          status: PRODUCT_STATUS.Active,
+        },
+        include: {
+          category: true,
+          variants: true,
+        },
+        orderBy: {
+          totalSold: "desc",
+        },
+        take: 10,
+      });
+
+      return c.json({
+        products,
+      });
+    }
+  )
 
 export default app;

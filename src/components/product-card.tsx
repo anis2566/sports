@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Heart, ShoppingCart } from "lucide-react";
 import { Category, Product, Variant } from "@prisma/client";
 import "@smastrom/react-rating/style.css";
+import { toast } from "sonner";
 
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { Skeleton } from "./ui/skeleton";
 import { Badge } from "./ui/badge";
 
 import { cn } from "@/lib/utils";
+import { useCart, useOpenCartModal } from "@/hooks/use-cart";
 
 type CategoryWithExtended = Omit<Category, 'createdAt' | 'updatedAt'> & {
     createdAt: string;
@@ -40,6 +42,24 @@ interface Props {
 }
 
 export const ProductCard = ({ product }: Props) => {
+    const {addToCart} = useCart()
+    const { onOpen } = useOpenCartModal();
+
+    const handleAddToCart = () => {
+        const cartItem = {
+            product: product,
+            variant: product.variants[0],
+            color: product.variants[0].colors[0],
+            price: product.variants[0].discountPrice || product.variants[0].price,
+            quantity: 1,
+        }
+        addToCart(cartItem)
+        toast.success("Added to cart", {
+            duration: 5000,
+        })
+        onOpen()
+    }
+
     return (
         <div className="w-full space-y-2 min-h-[300px] flex flex-col justify-between border">
             <Link href={`/products/${product.id}`} className="px-2 py-1 group relative h-full">
@@ -86,7 +106,7 @@ export const ProductCard = ({ product }: Props) => {
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button variant="default" className="flex-1 flex items-center gap-x-3">
+                            <Button variant="default" className="flex-1 flex items-center gap-x-3" onClick={handleAddToCart}>
                                 <ShoppingCart className="w-4 h-4 hidden md:block" />
                                 <p>Add to cart</p>
                             </Button>

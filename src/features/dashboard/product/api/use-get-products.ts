@@ -17,7 +17,7 @@ export const useGetProducts = () => {
     const status = searchParams.get("status") || undefined;
 
     const query = useQuery<ResponseType>({
-        queryKey: ["product", page, limit, sort, q, category, brand, status],
+        queryKey: ["products", page, limit, sort, q, category, brand, status],
         queryFn: async () => {
             const res = await client.api.product.$get({
                 query: { page, limit, sort, query: q, category, brand, status },

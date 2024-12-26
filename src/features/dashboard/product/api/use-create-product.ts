@@ -16,7 +16,7 @@ export const useCreateProduct = () => {
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async (json) => {
-            const res = await client.api.product.$post({ json });
+            const res = await client.api.product.$post({ json: json });
             return await res.json();
         },
         onSuccess: (data) => {
@@ -34,11 +34,12 @@ export const useCreateProduct = () => {
                 });
             }
         },
-        // onError: (error) => {
-        //     toast.error(error.message, {
-        //         duration: 5000,
-        //     });
-        // },
+        onError: (error) => {
+            console.log(error)
+            toast.error(error.message, {
+                duration: 5000,
+            });
+        },
     });
 
     return mutation;

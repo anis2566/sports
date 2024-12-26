@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import Link from "next/link"
+import { Suspense } from "react"
 
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
@@ -28,7 +29,9 @@ const Product = async () => {
                 </BreadcrumbList>
             </Breadcrumb>
 
-            <ProductList />
+            <Suspense fallback={<div>Loading...</div>}>
+                <ProductList />
+            </Suspense>
         </ContentLayout>
     )
 }

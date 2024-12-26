@@ -19,7 +19,7 @@ const app = new Hono()
       });
 
       return c.json({ success: "Banner created" }, 200);
-    } catch (error) {
+    } catch {
       return c.json({ error: "Failed to create banner" }, 500);
     }
   })
@@ -48,7 +48,7 @@ const app = new Hono()
       try {
         await db.banner.update({ where: { id }, data: body });
         return c.json({ success: "Banner updated" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to update banner" }, 500);
       }
     }
@@ -70,7 +70,7 @@ const app = new Hono()
         await db.banner.delete({ where: { id } });
 
         return c.json({ success: "Banner deleted" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to delete banner" }, 500);
       }
     }

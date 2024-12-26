@@ -15,7 +15,7 @@ import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
 export const TrendingProducts = () => {
     const { data, isLoading } =  useGetTrendingProducts();
 
-    return <div className="px-3 md:px-0 space-y-5">
+    return <div className="px-3 md:px-0 space-y-2">
         <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-600">Trending</h2>
             <Button variant="outline" size="sm">View All</Button>

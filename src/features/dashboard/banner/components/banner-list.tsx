@@ -12,16 +12,16 @@ import { PRODUCT_STATUS } from "@/constant";
 import { useDeleteBanner } from "@/hooks/use-banner";
 
 export const BannerList = () => {
-    const { isOpen, onOpen, onClose } = useDeleteBanner();
+    const { onOpen } = useDeleteBanner();
 
-  const { data, isLoading } = useGetBanners();
+    const { data, isLoading } = useGetBanners();
 
-    if(isLoading) {
+    if (isLoading) {
         return <BannerListSkeleton />
     }
 
     return (
-       <div className="w-full grid md:grid-cols-2 gap-6">
+        <div className="w-full grid md:grid-cols-2 gap-6">
             {data?.banners.map((banner) => (
                 <div key={banner.id} className="space-y-2">
                     <div className="relative aspect-video max-h-[300px]">
@@ -36,7 +36,7 @@ export const BannerList = () => {
                 </div>
             ))}
         </div>
-  )
+    )
 };
 
 

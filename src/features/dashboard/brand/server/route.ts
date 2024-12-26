@@ -34,7 +34,7 @@ const app = new Hono()
         });
 
         return c.json({ success: "Brand created" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to create brand" }, 500);
       }
     }
@@ -63,7 +63,7 @@ const app = new Hono()
         });
 
         return c.json({ success: "Brand edited" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to edit brand" }, 500);
       }
     }
@@ -85,7 +85,7 @@ const app = new Hono()
         await db.brand.delete({ where: { id } });
 
         return c.json({ success: "Brand deleted" }, 200);
-      } catch (error) {
+      } catch {
         return c.json({ error: "Failed to delete brand" }, 500);
       }
     }

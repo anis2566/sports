@@ -54,7 +54,7 @@ export const ProductList = () => {
                                 <TableRow key={product.id}>
                                     <TableCell>
                                         <Avatar>
-                                            <AvatarImage src={product.variants[0].imageUrl[0] || ""} />
+                                            <AvatarImage src={product.variants[0].images[0] || ""} />
                                             <AvatarFallback>{product.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                     </TableCell>

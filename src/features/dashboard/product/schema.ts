@@ -5,7 +5,7 @@ const requiredString = z.string().min(1, { message: "required" })
 const ProductVariantSchema = z.object({
     name: requiredString,
     stock: z.number().min(1, { message: "required" }),
-    color: z.string().optional(),
+    colors: z.array(z.string()).optional(),
     images: z.array(z.string()).min(1, { message: "required" }),
     price: z.number().min(1, { message: "required" }),
     discountPrice: z.number().optional(),
@@ -13,6 +13,7 @@ const ProductVariantSchema = z.object({
 
 export const ProductSchema = z.object({
     name: requiredString,
+    shortDescription: z.string().optional(),
     description: requiredString,
     brandId: requiredString,
     categoryId: requiredString,

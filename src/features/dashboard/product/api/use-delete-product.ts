@@ -28,7 +28,7 @@ export const useDeleteProduct = ({ onClose }: Props) => {
         onSuccess: (data) => {
             if ("success" in data) {
                 toast.success(data.success, { duration: 5000 });
-                queryClient.invalidateQueries({ queryKey: ["product"] });
+                queryClient.invalidateQueries({ queryKey: ["products"] });
                 onClose();
             }
 
