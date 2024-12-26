@@ -3,8 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { useSidebar } from "@/components/ui/sidebar"
-
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
@@ -13,7 +11,6 @@ interface LogoProps {
 }
 
 export const Logo = ({ callbackUrl, className }: LogoProps) => {
-    const { open } = useSidebar();
 
     return (
         <Link href={callbackUrl || "/"} className={cn("flex items-center gap-2", className)}>

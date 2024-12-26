@@ -17,7 +17,7 @@ export enum CATEGORY_STATUS {
 }
 
 
-export const PRODUCT_STATUS = {
-  Active: "Active",
-  Inactive: "Inactive",
+export enum PRODUCT_STATUS {
+  Active = "Active",
+  Inactive = "Inactive",
 }

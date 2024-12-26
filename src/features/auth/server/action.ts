@@ -25,6 +25,7 @@ export const getCurrent = cache(async () => {
     image: decodedPayload.image as string | null,
     userId: decodedPayload.userId as string,
     role: decodedPayload.role as string,
+    email: decodedPayload.email as string,
   };
 
   return user;

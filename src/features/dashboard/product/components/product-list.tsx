@@ -58,7 +58,7 @@ export const ProductList = () => {
                                             <AvatarFallback>{product.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                     </TableCell>
-                                    <TableCell>{product.name}</TableCell>
+                                    <TableCell className="truncate max-w-[200px]">{product.name}</TableCell>
                                     <TableCell>{product.category.name}</TableCell>
                                     <TableCell>{product.brand.name}</TableCell>
                                     <TableCell>{product.totalStock}</TableCell>

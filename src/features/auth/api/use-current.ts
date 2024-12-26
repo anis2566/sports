@@ -10,7 +10,8 @@ export const useCurrent = () => {
     queryKey: ["current"],
     queryFn: async () => {
       const res = await client.api.auth.current.$get();
-      return await res.json()
+      const parsed = await res.json();
+      return { user: parsed.user };
     },
     staleTime: Infinity,
     gcTime: Infinity,

@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import bcrypt from "bcryptjs";
-import { sign } from "hono/jwt";
-import { deleteCookie, setCookie } from "hono/cookie";
+import { sign, verify } from "hono/jwt";
+import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
 import { db } from "@/lib/db";
 import { SignInSchema, SignUpSchema } from "../schemas";
-import { sessionMiddleware } from "@/lib/session-middleware";
+import { JWTPayload, sessionMiddleware } from "@/lib/session-middleware";
 import { AUTH_COOKIE } from "@/constant";
 
 const app = new Hono()
@@ -89,10 +89,24 @@ const app = new Hono()
 
     return c.json({ success: "Login successful", token });
   })
-  .get("/current", sessionMiddleware, async (c) => {
-    const user = c.get("user");
+  .get("/current", async (c) => {
+    const session = getCookie(c, AUTH_COOKIE);
 
-    return c.json(user);
+    if (!session) {
+      return c.json({ user: null }, 400);
+    }
+
+    const decodedPayload = await verify(session, process.env.JWT_SECRET!);
+
+    if (!decodedPayload) {
+      return c.json({ user: null }, 401);
+    }
+
+    const { name, email, image, userId, role } = decodedPayload;
+
+    const user = { name, email, image, userId, role } as JWTPayload;
+
+    return c.json({user});
   })
   .post("/logout", sessionMiddleware, async (c) => {
     deleteCookie(c, AUTH_COOKIE);

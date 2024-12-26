@@ -149,7 +149,7 @@ model Variant {
   name      String
   stock     Int
   color     String?
-  imageUrl  String[] @default([])
+  images  String[] @default([])
   price     Int
   discount    Int?
   discountPrice Int?
@@ -157,6 +157,18 @@ model Variant {
   productId String @db.ObjectId
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Banner {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  imageUrl String
+  productId String? @db.ObjectId
+  status      String @default("Active")
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

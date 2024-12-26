@@ -158,20 +158,20 @@ export function getAdminMenuList(pathname: string): Group[] {
                 },
                 {
                     href: "",
-                    label: "Banners",
-                    active: pathname.includes("/dashboard/banners"),
+                    label: "Banner",
+                    active: pathname.includes("/dashboard/banner"),
                     icon: GalleryVertical,
                     submenus: [
                         {
-                            href: "/dashboard/banners/new",
+                            href: "/dashboard/banner/new",
                             label: "New",
-                            active: pathname === "/dashboard/banners/new",
+                            active: pathname === "/dashboard/banner/new",
                             icon: PlusCircle,
                         },
                         {
-                            href: "/dashboard/banners",
+                            href: "/dashboard/banner",
                             label: "List",
-                            active: pathname === "/dashboard/banners",
+                            active: pathname === "/dashboard/banner",
                             icon: List,
                         },
                     ],
