@@ -20,14 +20,18 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import { useCurrent } from "@/features/auth/api/use-current";
+import { useLogout } from "@/features/auth/api/use-logout";
 
 export function UserButton() {
     const { data } = useCurrent();
 
-    // const handleSignOut = async () => {
-    //     await signOut();
-    // };
+    const { mutate: logout } = useLogout();
+
+    const handleSignOut = () => {
+        logout();
+    };
 
     return (
         <DropdownMenu>
@@ -99,7 +103,7 @@ export function UserButton() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="hover:cursor-pointer"
-                // onClick={handleSignOut}
+                    onClick={handleSignOut}
                 >
                     <LogOut className="mr-3 h-4 w-4 text-muted-foreground" />
                     Sign out

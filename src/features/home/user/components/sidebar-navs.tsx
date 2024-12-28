@@ -8,9 +8,16 @@ import { Button, buttonVariants } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 import { userSidebarNavs } from "@/constant";
+import { useLogout } from "@/features/auth/api/use-logout";
 
 export const SidebarNavs = () => {
     const pathname = usePathname();
+
+    const { mutate: logout } = useLogout();
+
+    const handleSignOut = () => {
+        logout();
+    };
 
     return (
         <div className="space-y-2">
@@ -34,7 +41,7 @@ export const SidebarNavs = () => {
                 );
             })}
 
-            <Button variant="ghost" className="flex w-full justify-start gap-x-3">
+            <Button variant="ghost" className="flex w-full justify-start gap-x-3" onClick={handleSignOut}>
                 <LogOutIcon className="h-4 w-4" />
                 Logout
             </Button>

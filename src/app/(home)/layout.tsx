@@ -1,9 +1,15 @@
-import { Separator } from "@/components/ui/separator"
+import { Metadata } from "next"
 
+import { Separator } from "@/components/ui/separator"
 import { Footer } from "@/features/home/components/footer"
 import { Header } from "@/features/home/components/header"
 import { MobileHeader } from "@/features/home/components/mobile-header"
 import { Navbar } from "@/features/home/components/navbar"
+
+export const metadata: Metadata = {
+    title: "TomarSports | Home",
+    description: "Home.",
+};
 
 const HomeLayout = ({ children }: { children: React.ReactNode }) => {
     return (

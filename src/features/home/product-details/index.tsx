@@ -12,6 +12,7 @@ import RelatedProducts from "./related-products"
 import { DeliveryBanner } from "@/components/delivery-banner"
 import { SimilarCategoryProducts } from "./similar-category-products"
 import { Reviews } from "./reviews"
+import { Questions } from "./questions"
 
 interface ProductWithRelations extends Product {
     category: Category
@@ -67,6 +68,9 @@ export const ProductDetails = ({ product }: Props) => {
                 </TabsContent>
                 <TabsContent value="reviews">
                     <Reviews productId={parsedProduct.id} rating={parsedProduct.rating} totalReviews={parsedProduct.totalReview} />
+                </TabsContent>
+                <TabsContent value="questions">
+                    <Questions productId={parsedProduct.id} />
                 </TabsContent>
             </Tabs>
 

@@ -72,6 +72,18 @@ export const CartModal = () => {
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </TooltipProvider>
+                                                <TooltipProvider delayDuration={0}>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <Button variant="outline" size="icon" onClick={() => removeFromCart(item.product.id)}>
+                                                                <Trash2 className="w-4 h-4 text-red-500" />
+                                                            </Button>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            Remove from cart
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
                                             </div>
                                             <div className="flex items-center">
                                                 <TooltipProvider delayDuration={0}>
@@ -97,7 +109,7 @@ export const CartModal = () => {
 
                 <div className="flex justify-between items-center">
                     <p className="text-lg font-semibold">Total: ৳{cart.reduce((acc, item) => acc + (item.variant.discountPrice ? item.variant.discountPrice : item.variant.price) * item.quantity, 0).toFixed(2)}</p>
-                    <Button asChild onClick={onClose}>
+                    <Button asChild onClick={onClose} disabled={cart.length === 0}>
                         <Link href="/checkout">Checkout</Link>
                     </Button>
                 </div>

@@ -102,7 +102,7 @@ function Calendar({
           const Icon = orientation === "left" ? ChevronLeft : ChevronRight
           return <Icon className="h-4 w-4" />
         },
-        Nav: ({ className, children, ...props }) => {
+        Nav: ({ className, ...props }) => {
           const { nextMonth, previousMonth, goToMonth } = useDayPicker()
 
           const isPreviousDisabled = (() => {
@@ -190,9 +190,8 @@ function Calendar({
                 disabled={isPreviousDisabled}
                 aria-label={
                   navView === "years"
-                    ? `Go to the previous ${
-                        displayYears.to - displayYears.from + 1
-                      } years`
+                    ? `Go to the previous ${displayYears.to - displayYears.from + 1
+                    } years`
                     : labelPrevious(previousMonth)
                 }
                 onClick={handlePreviousClick}
@@ -208,9 +207,8 @@ function Calendar({
                 disabled={isNextDisabled}
                 aria-label={
                   navView === "years"
-                    ? `Go to the next ${
-                        displayYears.to - displayYears.from + 1
-                      } years`
+                    ? `Go to the next ${displayYears.to - displayYears.from + 1
+                    } years`
                     : labelNext(nextMonth)
                 }
                 onClick={handleNextClick}
@@ -264,7 +262,7 @@ function Calendar({
                         className={cn(
                           "h-7 w-full text-sm font-normal text-foreground",
                           displayYears.from + i === new Date().getFullYear() &&
-                            "bg-accent font-medium text-accent-foreground"
+                          "bg-accent font-medium text-accent-foreground"
                         )}
                         variant="ghost"
                         onClick={() => {

@@ -71,7 +71,7 @@ export const ProductCard = ({ product }: Props) => {
                             {product.category.name.length > 50 ? `${product.category.name.slice(0, 50)}...` : product.category.name}
                         </p>
                         <div className="flex items-center gap-x-2">
-                            <Rating style={{ maxWidth: 70 }} value={4.5} readOnly />
+                            <Rating style={{ maxWidth: 70 }} value={product.rating} readOnly />
                             <p className="text-sm text-muted-foreground">({product.totalReview})</p>
                         </div>
                         {

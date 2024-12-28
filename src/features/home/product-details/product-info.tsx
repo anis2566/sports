@@ -2,11 +2,12 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import Link from "next/link";
-import { Layers3, ShoppingCart, Heart, Share2, CornerDownLeft } from "lucide-react";
+import { Layers3, ShoppingCart, Heart, Share2, CornerDownLeft, Loader2 } from "lucide-react";
 import { Rating } from "@smastrom/react-rating";
 import { toast } from "sonner";
 import Image from "next/image";
 import "@smastrom/react-rating/style.css";
+import Autoplay from "embla-carousel-autoplay"
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,13 @@ import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 import { cn } from "@/lib/utils";
-import { ProductWithRelations, useCart, VariantWithExtended } from "@/hooks/use-cart";
+import { ProductWithRelations, useCart, useOpenCartModal, VariantWithExtended } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
+import { useGetTopReviews } from "@/features/dashboard/product/api/use-get-top-reviews";
 
 interface Props {
     product: ProductWithRelations
@@ -30,6 +34,9 @@ export default function ProductInfo({ product, activeVariant, setActiveVariant }
 
     const { addToCart } = useCart()
     const { addToWishlist } = useWishlist()
+    const { onOpen} = useOpenCartModal()
+
+    const { data: reviews, isFetching } = useGetTopReviews(product.id)
 
     const handleAddToCart = () => {
         const cartItem = {
@@ -43,6 +50,7 @@ export default function ProductInfo({ product, activeVariant, setActiveVariant }
         toast.success("Added to cart", {
             duration: 5000,
         })
+        onOpen()
     }
 
     const handleAddToWishlist = (product: ProductWithRelations) => {
@@ -135,7 +143,7 @@ export default function ProductInfo({ product, activeVariant, setActiveVariant }
 
 
 
-            <div className="flex items-center gap-x-2">
+            <div className="hidden md:flex items-center gap-x-2">
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -156,6 +164,55 @@ export default function ProductInfo({ product, activeVariant, setActiveVariant }
                 <Button variant="secondary" className="flex items-center gap-x-2">
                     <Share2 className="w-4 h-4" />
                     <span className="hidden md:block">Share</span>
+                </Button>
+            </div>
+
+            <div className={cn("flex md:hidden flex-col fixed bottom-0 left-0 right-0 z-50 px-3")}>
+                <Carousel
+                    opts={{
+                        align: "start",
+                        loop: true,
+                    }}
+                    plugins={[
+                        Autoplay({
+                            delay: 5000,
+                            stopOnMouseEnter: true,
+                        }),
+                    ]}
+                    orientation="vertical"
+                    className={cn("w-full bg-background", reviews?.length === 0 && "hidden")}
+                >
+                    <CarouselContent className="h-[80px]">
+                        {
+                            isFetching ? (
+                                <div className="flex items-center justify-center h-full">
+                                    <Loader2 className="w-6 h-6 animate-spin" />
+                                </div>
+                            ) : (
+                                reviews?.map((review) => (
+                                    <CarouselItem key={review.id}>
+                                        <div className="flex items-center gap-x-2 px-3 py-2">
+                                            <Avatar>
+                                                <AvatarImage src={review.user.image || ""} />
+                                                <AvatarFallback>{review.user.name?.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div className="w-full">
+                                                <div className="flex items-center gap-x-2">
+                                                    <p className="text-sm font-semibold">{review.user.name}</p>
+                                                    <Rating style={{ maxWidth: 50 }} value={review.rating} readOnly />
+                                                </div>
+                                                <p className="text-xs text-muted-foreground truncate max-w-[300px]">{review.content}</p>
+                                            </div>
+                                        </div>
+                                    </CarouselItem>
+                                ))
+                            )
+                        }
+                    </CarouselContent>
+                </Carousel>
+                <Button variant="default" size="lg" className="w-full" onClick={handleAddToCart}>
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    <span>Add to Cart</span>
                 </Button>
             </div>
         </div>

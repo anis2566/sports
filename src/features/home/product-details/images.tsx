@@ -32,7 +32,7 @@ export const Images = ({ images }: Props) => {
                     className="h-[300px] object-cover rounded-lg"
                     height="300"
                     src={currentImage}
-                    width="300"
+                    width="240"
                 />
             </div>
 
@@ -40,7 +40,7 @@ export const Images = ({ images }: Props) => {
                 opts={{
                     align: "start",
                 }}
-                className="w-full max-w-sm"
+                className="w-full max-w-[240px]"
             >
                 <CarouselContent>
                     {[...images].map((image, index) => {
@@ -48,10 +48,10 @@ export const Images = ({ images }: Props) => {
                         return (
                             <CarouselItem key={index} className="basis-1/2 sm:basis-1/3 md:basis-1/3 lg:basis-1/4">
                                 <div className="p-1">
-                                    <div className={cn("border border-gray-300 rounded-md aspect-square flex items-center justify-center", active && "border-gray-400 opacity-70")} onClick={() => setCurrentImage(image)}>
+                                    <div className={cn("border border-gray-300 rounded-md aspect-square max-w-[80px] flex items-center justify-center", active && "border-gray-400 opacity-70")} onClick={() => setCurrentImage(image)}>
                                         <Image
                                             alt="Product"
-                                            className="rounded-lg w-[100px] h-auto md:w-[70px] md:h-[50px] object-cover"
+                                            className="rounded-lg w-[80px] h-auto md:w-[70px] md:h-[50px] object-cover"
                                             height="100"
                                             src={image}
                                             width="100"

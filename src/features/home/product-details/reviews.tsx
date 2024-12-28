@@ -2,10 +2,12 @@
 
 import { Rating } from "@smastrom/react-rating";
 import { Loader2 } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
 import { useAddReview } from "@/hooks/use-review";
 import { useGetReviews } from "@/features/dashboard/product/api/use-get-reviews";
 
@@ -18,7 +20,6 @@ interface ReviewsProps {
 export const Reviews = ({ productId, rating, totalReviews }: ReviewsProps) => {
     const { onOpen } = useAddReview();
     const { reviews, fetchNextPage, hasNextPage, isFetching, status } = useGetReviews(productId);
-
 
     return (
         <Card>
@@ -73,11 +74,11 @@ export const Reviews = ({ productId, rating, totalReviews }: ReviewsProps) => {
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between">
                                             <h3 className="font-semibold">{review.user.name}</h3>
-                                            {/* <ReactTimeAgo
-                                                date={review.createdAt}
-                                                locale="en-US"
-                                                className="text-xs"
-                                            /> */}
+                                            <p className="text-xs text-gray-500">
+                                                {formatDistanceToNow(new Date(review.createdAt), {
+                                                    addSuffix: true,
+                                                })}
+                                            </p>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <Rating style={{ maxWidth: 70 }} value={review.rating} readOnly />
@@ -86,35 +87,6 @@ export const Reviews = ({ productId, rating, totalReviews }: ReviewsProps) => {
                                         <p className="text-sm text-gray-700 mt-2">{review.content}</p>
                                     </div>
                                 </div>
-                                {/* {question.answers.map((answer) => (
-                                    <div className="ml-12 space-y-4" key={answer.id}>
-                                        <div className="flex space-x-4">
-                                            <Avatar className="h-8 w-8">
-                                                <AvatarImage
-                                                    src={answer.user.image || ""}
-                                                    alt={answer.user.name || ""}
-                                                />
-                                                <AvatarFallback>
-                                                    {answer.user.name?.charAt(0)}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-1">
-                                                <div className="flex items-center justify-between">
-                                                    <h4 className="font-semibold">{answer.user.name}</h4>
-                                                    <span className="text-sm text-gray-500">
-                                                        <ReactTimeAgo
-                                                            date={answer.createdAt}
-                                                            locale="en-US"
-                                                            className="text-xs"
-                                                        />
-                                                    </span>
-                                                </div>
-                                                <p className="text-sm text-gray-700">{answer.answer}</p>
-                                                <div className="flex items-center space-x-4"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))} */}
                             </div>
                         ))}
                     </div>

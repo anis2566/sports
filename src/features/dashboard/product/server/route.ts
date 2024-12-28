@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { isAdmin, sessionMiddleware } from "@/lib/session-middleware";
 import { ProductSchema } from "../schema";
-import { ReviewSchema } from "@/features/home/products/schemas";
+import { QuestionSchema, ReviewSchema } from "@/features/home/products/schemas";
 import { ORDER_STATUS } from "@/constant";
 
 const app = new Hono()
@@ -349,7 +349,7 @@ const app = new Hono()
         include: {
           user: true,
         },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: "desc" },
         take: -pageSize - 1,
         cursor: cursor ? { id: cursor } : undefined,
       });
@@ -363,6 +363,359 @@ const app = new Hono()
 
       return c.json(data);
     }
-  );
+  )
+  .get(
+    "/review/admin",
+    isAdmin,
+    zValidator("query", z.object({
+      query: z.string().optional(),
+      page: z.string().optional(),
+      limit: z.string().optional(),
+      sort: z.string().optional(),
+    })),
+    async (c) => {
+      const { query, page, limit, sort } = c.req.valid("query");
+
+      const pageNumber = parseInt(page || "1");
+      const limitNumber = parseInt(limit || "5");
+
+      const [reviews, totalCount] = await Promise.all([
+        db.review.findMany({
+          where: {
+            ...(query && {
+              product: {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            })
+          },
+          include: {
+            product: true,
+            user: true,
+          },
+          orderBy: {
+            ...(sort === "asc" ? { createdAt: "asc" } : { createdAt: "desc" }),
+          },
+          skip: (pageNumber - 1) * limitNumber,
+          take: limitNumber,
+        }),
+        db.review.count({
+          where: {
+            ...(query && {
+              product: {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            }),
+          },
+        }),
+      ]);
+
+      return c.json({ reviews, totalCount });
+    }
+  )
+  .delete(
+    "/review/:id",
+    isAdmin,
+    zValidator("param", z.object({ id: z.string() })),
+    async (c) => {
+      const id = await c.req.param("id");
+
+      try {
+        const review = await db.review.findUnique({ where: { id }, include: { product: true } });
+
+        if (!review) {
+          return c.json({ error: "Review not found" }, 404);
+        }
+
+        await db.review.delete({ where: { id } });
+
+        const product = await db.product.findUnique({
+          where: { id: review.productId },
+          include: {
+            reviews: true,
+          },
+        });
+
+        if (!product) {
+          return c.json({ error: "Product not found" }, 404);
+        }
+
+        const remainingReviews = product.reviews;
+        const newTotalReview = remainingReviews.length;
+
+        let newRating = 0;
+        if (newTotalReview > 0) {
+          const totalRating = remainingReviews.reduce(
+            (sum, r) => sum + r.rating,
+            0
+          );
+          newRating = Math.floor((totalRating / newTotalReview) * 2) / 2;
+        }
+
+        await db.product.update({
+          where: { id: review.productId },
+          data: { totalReview: newTotalReview, rating: newRating },
+        });
+
+        return c.json({ success: "Review deleted" }, 200);
+      } catch {
+        return c.json({ error: "Failed to delete review" }, 500);
+      }
+    }
+  )
+  .post(
+    "/question/:id",
+    sessionMiddleware,
+    zValidator("param", z.object({ id: z.string() })),
+    zValidator("json", QuestionSchema),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const { question, productId } = c.req.valid("json");
+      const { userId } = c.get("user");
+      try {
+        const product = await db.product.findUnique({
+          where: { id },
+        });
+
+        if (!product) {
+          return c.json({ error: "Product not found" }, 404);
+        }
+
+        await db.question.create({
+          data: { question, productId, userId },
+        });
+
+        return c.json({ success: "Question added" });
+      } catch (error) {
+        console.log(error);
+        return c.json({ error: "Failed to add question" }, 500);
+      }
+    }
+  )
+  .get(
+    "/questions/:id",
+    zValidator("param", z.object({ id: z.string() })),
+    zValidator("query", z.object({ cursor: z.string().optional() })),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const { cursor } = c.req.valid("query") || undefined;
+
+      const pageSize = 3;
+
+      const questions = await db.question.findMany({
+        where: { productId: id },
+        include: {
+          user: true,
+          answers: {
+            include: {
+              user: true,
+            }
+          }
+        },
+        orderBy: { createdAt: "desc" },
+        take: -pageSize - 1,
+        cursor: cursor ? { id: cursor } : undefined,
+      });
+
+      const previousCursor = questions.length > pageSize ? questions[0].id : null;
+
+      const data = {
+        questions: questions.length > pageSize ? questions.slice(1) : questions,
+        previousCursor,
+      };
+
+      return c.json(data);
+    }
+  )
+  .get(
+    "/question/admin",
+    isAdmin,
+    zValidator("query", z.object({
+      query: z.string().optional(),
+      page: z.string().optional(),
+      limit: z.string().optional(),
+      sort: z.string().optional(),
+    })),
+    async (c) => {
+      const { query, page, limit, sort } = c.req.valid("query");
+
+      const pageNumber = parseInt(page || "1");
+      const limitNumber = parseInt(limit || "5");
+
+      const [questions, totalCount] = await Promise.all([
+        db.question.findMany({
+          where: {
+            ...(query && {
+              product: {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            })
+          },
+          include: {
+            product: true,
+            user: true,
+            answers: {
+              select: {
+                id: true,
+              }
+            }
+          },
+          orderBy: {
+            ...(sort === "asc" ? { createdAt: "asc" } : { createdAt: "desc" }),
+          },
+          skip: (pageNumber - 1) * limitNumber,
+          take: limitNumber,
+        }),
+        db.question.count({
+          where: {
+            ...(query && {
+              product: {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              },
+            }),
+          },
+        }),
+      ]);
+
+      return c.json({ questions, totalCount });
+    }
+  )
+  .delete(
+    "/question/:id",
+    isAdmin,
+    zValidator("param", z.object({ id: z.string() })),
+    async (c) => {
+      const id = await c.req.param("id");
+
+      try {
+        const question = await db.question.findUnique({ where: { id }, include: { product: true } });
+
+        if (!question) {
+          return c.json({ error: "Question not found" }, 404);
+        }
+
+        await db.question.delete({ where: { id } });
+
+        return c.json({ success: "Question deleted" }, 200);
+      } catch {
+        return c.json({ error: "Failed to delete question" }, 500);
+      }
+    }
+  )
+  .post(
+    "/answer/:id",
+    sessionMiddleware,
+    isAdmin,
+    zValidator("param", z.object({ id: z.string() })),
+    zValidator("json", z.object({
+      answer: z.string(),
+    })),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const { answer } = c.req.valid("json");
+      const { userId } = c.get("user")
+      try {
+        const question = await db.question.findUnique({ where: { id } });
+
+        if (!question) {
+          return c.json({ error: "Question not found" }, 404);
+        }
+
+        await db.answer.create({
+          data: {
+            answer,
+            questionId: id,
+            userId,
+          }
+        });
+
+        return c.json({ success: "Answer added" });
+      } catch (error) {
+        console.log(error);
+        return c.json({ error: "Failed to add answer" }, 500);
+      }
+    }
+  )
+  .get(
+    "/reviews/top/:id",
+    zValidator("param", z.object({ id: z.string() })),
+    async (c) => {
+      const id = await c.req.valid("param").id;
+      const reviews = await db.review.findMany({
+        where: {
+          productId: id,
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              image: true,
+            }
+          },
+        },
+        orderBy: [
+          { rating: "asc" },
+          { createdAt: "desc" },
+        ],
+        take: 5,
+      });
+      return c.json(reviews);
+    }
+  )
+  .get(
+    "/home",
+    zValidator("query", z.object({
+      cursor: z.string().optional(),
+      query: z.string().optional(),
+      sort: z.string().optional(),
+      // category: z.string().optional(),
+      // brand: z.string().optional(),
+      // discount: z.string().optional(),
+      // minPrice: z.string().optional(),
+      // maxPrice: z.string().optional(),
+      // minDiscount: z.string().optional(),
+      // maxDiscount: z.string().optional(),
+      // rating: z.string().optional(),
+    })),
+    async (c) => {
+      const { cursor, query } = c.req.valid("query");
+
+      const pageSize = 8;
+
+      const products = await db.product.findMany({
+        where: {
+          ...(query && { name: { contains: query, mode: "insensitive" } }),
+        },
+        include: {
+          variants: true,
+          category: true,
+        },
+        orderBy: {
+        },
+        take: pageSize + 1,
+        cursor: cursor ? { id: cursor } : undefined,
+      });
+
+      const nextCursor = products.length > pageSize ? products[pageSize].id : null;
+
+      const data = {
+        products,
+        nextCursor,
+      };
+
+      return c.json(data);
+    }
+  )
 
 export default app;

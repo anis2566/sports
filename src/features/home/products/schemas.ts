@@ -6,3 +6,10 @@ export const ReviewSchema = z.object({
 });
 
 export type ReviewSchemaType = z.infer<typeof ReviewSchema>;
+
+export const QuestionSchema = z.object({
+  question: z.string().min(10, { message: "required" }),
+  productId: z.string().min(1, { message: "required" }),
+});
+
+export type QuestionSchemaType = z.infer<typeof QuestionSchema>;

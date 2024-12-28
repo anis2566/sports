@@ -3,6 +3,7 @@ import { InferResponseType, InferRequestType } from "hono";
 import { toast } from "sonner";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 
 import { client } from "@/lib/rpc";
 import { ReviewSchema } from "@/features/home/products/schemas";
@@ -21,6 +22,7 @@ interface UseCreateReviewProps {
 
 export const useCreateReview = ({ onClose, form }: UseCreateReviewProps) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json, param }) => {
@@ -41,6 +43,7 @@ export const useCreateReview = ({ onClose, form }: UseCreateReviewProps) => {
           content: "",
         });
         onClose();
+        router.refresh();
       }
 
       if ("error" in data) {

@@ -3,15 +3,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Trash2, Heart, Plus, Minus, ArrowRight } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay"
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
 import { ProductWithRelations, useCart } from "@/hooks/use-cart";
 import { useCurrent } from "@/features/auth/api/use-current";
 import { useWishlist } from "@/hooks/use-wishlist";
-import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export const CartPage = () => {
     const { cart, removeFromCart, incrementQuantity, decrementQuantity } = useCart()
@@ -40,7 +43,7 @@ export const CartPage = () => {
 
     return (
         <div className="mt-4 px-3 md:px-0 relative">
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2">
                     <CardHeader>
                         <CardTitle>{cart.length} items in cart</CardTitle>
@@ -52,9 +55,9 @@ export const CartPage = () => {
                         {cart.map((item) => (
                             <div key={item.product.id} className="flex justify-between">
                                 <div className="flex gap-x-3">
-                                    <Image src={item.variant.images[0]} alt={item.product.name} width={100} height={100} />
+                                    <Image src={item.variant.images[0]} alt={item.product.name} width={100} height={100} className="w-[100px] h-[100px]" />
                                     <div className="flex flex-col gap-y-1">
-                                        <Link href={`/products/${item.product.id}`} className="text-sm md:text-lg font-semibold hover:underline truncate">{item.product.name}</Link>
+                                        <Link href={`/products/${item.product.id}`} className="text-sm md:text-lg font-semibold hover:underline whitespace-break">{item.product.name}</Link>
                                         <div className="flex md:hidden items-center gap-x-2">
                                             <p className="text-sm md:text-lg font-semibold">৳{item.price * item.quantity}</p>
                                             <p className="text-sm text-rose-500 line-through">৳{item.variant.discountPrice || item.variant.price * item.quantity}</p>
@@ -164,7 +167,7 @@ export const CartPage = () => {
                 </Card>
             </div>
 
-            {/* <div className={cn("flex md:hidden flex-col fixed bottom-0 left-0 right-0 z-50 px-3")}>
+            <div className={cn("flex md:hidden flex-col fixed bottom-0 left-0 right-0 z-50 px-3")}>
                 <Carousel
                     opts={{
                         align: "start",
@@ -190,7 +193,7 @@ export const CartPage = () => {
                 </Carousel>
                 <div>
                     {
-                        session && session.userId ? (
+                        data?.user?.userId ? (
 
                             <Button className="w-full" asChild>
                                 <Link href="/checkout">
@@ -208,7 +211,7 @@ export const CartPage = () => {
                         )
                     }
                 </div>
-            </div> */}
+            </div>
         </div>
     )
 }
