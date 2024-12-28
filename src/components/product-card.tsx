@@ -12,9 +12,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Skeleton } from "./ui/skeleton";
-import { Badge } from "./ui/badge";
 
-import { cn } from "@/lib/utils";
 import { useCart, useOpenCartModal } from "@/hooks/use-cart";
 
 type CategoryWithExtended = Omit<Category, 'createdAt' | 'updatedAt'> & {
@@ -61,8 +59,8 @@ export const ProductCard = ({ product }: Props) => {
     }
 
     return (
-        <div className="w-full space-y-2 min-h-[300px] flex flex-col justify-between border">
-            <Link href={`/products/${product.id}`} className="px-2 py-1 group relative h-full">
+        <div className="w-full space-y-2 min-h-[300px] flex flex-col justify-between border relative">
+            <Link href={`/products/${product.id}`} className="px-2 py-1 group h-full">
                 <div className="w-full space-y-2">
                     <div className="relative aspect-square w-full max-h-[150px]">
                         <Image src={product.variants[0].images[0]} alt={product.name} fill className="mx-auto object-contain group-hover:scale-105 transition-all duration-300 group-hover:rotate-3" />
@@ -84,23 +82,17 @@ export const ProductCard = ({ product }: Props) => {
                             )
                         }
                         <div className="flex items-center gap-x-1">
-                            <p className={cn("tracking-wider text-xs", product.variants[0].discountPrice && "text-rose-500 line-through")}>৳{product.variants[0].price}</p>
-                            <p className={cn("tracking-wider text-sm", !product.variants[0].discountPrice && "hidden")}>৳{product.variants[0].discountPrice}</p>
-                            {
-                                product.variants[0].discountPrice && (
-                                    <p className={cn("text-[12px] md:text-xs text-green-500")}>{product.variants[0].discount}% off)</p>
-                                )
-                            }
+                            {product.variants[0].discountPrice ? (
+                                <>
+                                <p className="tracking-wider text-base">৳{product.variants[0].discountPrice}</p>
+                                <p className="tracking-wider text-xs text-red-500 line-through">৳{product.variants[0].price}</p>
+                                </>
+                            ) : (
+                                <p className="tracking-wider text-base">৳{product.variants[0].price}</p>
+                            )}
                         </div>
                     </div>
                 </div>
-                {
-                    product.variants[0].discountPrice && (
-                        <Badge className="absolute top-2 -left-2 -rotate-45 text-secondary-foreground" variant="secondary">
-                            {product.variants[0].discount}% off
-                        </Badge>
-                    )
-                }
             </Link>
             <div className="flex justify-between items-center p-2 w-full gap-x-3">
                 <TooltipProvider delayDuration={0}>

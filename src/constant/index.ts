@@ -1,3 +1,9 @@
+import { FilePenLine, MessageCircle, ShoppingBag, Sparkles } from "lucide-react";
+
+import { User } from "lucide-react";
+
+import { LucideIcon } from "lucide-react";
+
 export const AUTH_COOKIE = "access-token"
 
 export enum ROLE {
@@ -41,3 +47,43 @@ export enum PAYMENT_STATUS {
   Paid = "Paid",
   Failed = "Failed",
 }
+
+export enum GENDER {
+  Male = "Male",
+  Female = "Female",
+  Other = "Other",
+}
+
+type UserSidebarNavs = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+export const userSidebarNavs: UserSidebarNavs[] = [
+  {
+    label: "Profile",
+    href: "/user/profile",
+    icon: User,
+  },
+  {
+    label: "Orders",
+    href: "/user/orders",
+    icon: ShoppingBag,
+  },
+  {
+    label: "Reviews",
+    href: "/user/reviews",
+    icon: FilePenLine,
+  },
+  {
+    label: "Questions",
+    href: "/user/questions",
+    icon: MessageCircle,
+  },
+  {
+    label: "Points",
+    href: "/user/points",
+    icon: Sparkles,
+  },
+];

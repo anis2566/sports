@@ -12,6 +12,7 @@ import homeApp from "@/features/home/server/route";
 import bannerApp from "@/features/dashboard/banner/server/route";
 import checkoutApp from "@/features/home/checkout/server/route";
 import orderApp from "@/features/dashboard/order/server/route";
+import userApp from "@/features/home/user/server/route";
 
 const app = new Hono()
   .basePath("/api")
@@ -24,6 +25,8 @@ const app = new Hono()
   .route("/banner", bannerApp)
   .route("/checkout", checkoutApp)
   .route("/order", orderApp)
+  .route("/user", userApp)
+
 
 export const GET = handle(app);
 export const POST = handle(app);

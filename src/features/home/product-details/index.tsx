@@ -11,6 +11,7 @@ import { VariantWithExtended } from "@/hooks/use-cart"
 import RelatedProducts from "./related-products"
 import { DeliveryBanner } from "@/components/delivery-banner"
 import { SimilarCategoryProducts } from "./similar-category-products"
+import { Reviews } from "./reviews"
 
 interface ProductWithRelations extends Product {
     category: Category
@@ -65,7 +66,7 @@ export const ProductDetails = ({ product }: Props) => {
                     <p>{parsedProduct.description}</p>
                 </TabsContent>
                 <TabsContent value="reviews">
-                    {/* <Reviews bookId={book.id} rating={book.rating} reviewsCount={book.reviews.length} /> */}
+                    <Reviews productId={parsedProduct.id} rating={parsedProduct.rating} totalReviews={parsedProduct.totalReview} />
                 </TabsContent>
             </Tabs>
 

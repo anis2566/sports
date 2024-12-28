@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { ContentLayout } from "@/features/dashboard/components/content-layout";
 import { ORDER_STATUS } from "@/constant";
 import { StatusButton } from "@/features/dashboard/order/components/status-button";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
     title: "Dashboard | Order | Detail",
@@ -76,6 +77,11 @@ const DetailOrder = async ({ params }: Props) => {
                                             <Image src={item.variant.images[0]} alt={item.variant.name} width={100} height={100} />
                                             <div className="flex flex-col gap-y-1">
                                                 <p className="text-sm md:text-lg font-semibold">{item.variant.name}</p>
+                                                {
+                                                    item.color && (
+                                                        <div style={{ backgroundColor: item.color }} className={cn("w-5 h-5 rounded-full")} />
+                                                    )
+                                                }
                                                 <p className="text-sm font-semibold">{item.quantity}x copy</p>
                                                 <p className="text-sm">৳{item.variant.price}</p>
                                             </div>

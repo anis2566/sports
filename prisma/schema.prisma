@@ -31,12 +31,18 @@ model User {
   image         String?
   role          String          @default("User")
   status        String          @default("Pending")
+  dob           DateTime?
+  gender        String?
+  phone         String?
 
   accounts      Account[]
   sessions      Session[]
   Authenticator Authenticator[]
 
   orders Order[]
+  reviews Review[]
+  questions Question[]
+  answers Answer[]
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -153,6 +159,8 @@ model Product {
 
   variants Variant[]
   orderItems OrderItem[]
+  reviews Review[]
+  questions Question[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -244,3 +252,54 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
 }
+
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  rating    Int      @default(0)
+
+  productId  String   @db.ObjectId
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+}
+
+model Question {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  question  String
+
+  userId String   @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productId String   @db.ObjectId
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  answers Answer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Answer {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  answer    String
+
+  userId String   @db.ObjectId
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String   @db.ObjectId
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+

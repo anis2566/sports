@@ -7,6 +7,7 @@ import { DeleteBannerModal } from "@/features/dashboard/banner/components/delete
 import { CartModal } from "@/features/home/cart/components/cart-modal";
 import { OrderStatusModal } from "@/features/dashboard/order/components/status-modal";
 import { DeleteOrderModal } from "@/features/dashboard/order/components/delete-modal";
+import { ReveiwModal } from "@/features/home/product-details/reveiw-modal";
 
 export const ModalProvider = () => {
     return (
@@ -18,6 +19,7 @@ export const ModalProvider = () => {
             <CartModal />
             <OrderStatusModal />
             <DeleteOrderModal />
+            <ReveiwModal />
         </>
     )
 }
