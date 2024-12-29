@@ -1,5 +1,8 @@
 "use client"
 
+import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
     Carousel,
@@ -11,14 +14,20 @@ import {
 
 import { useGetTrendingProducts } from "@/features/home/api/use-get-trending-products";
 import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
+import { GENRE } from "@/constant";
 
 export const TrendingProducts = () => {
-    const { data, isLoading } =  useGetTrendingProducts();
+    const { data, isLoading } = useGetTrendingProducts();
 
     return <div className="px-3 md:px-0 space-y-2">
         <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-600">Trending</h2>
-            <Button variant="outline" size="sm">View All</Button>
+            <Button variant="outline" size="sm" asChild>
+                <Link href={`/products?genre=${GENRE.Trending}`}>
+                    <span>View All</span>
+                    <ArrowRightIcon className="w-4 h-4" />
+                </Link>
+            </Button>
         </div>
 
         <Carousel

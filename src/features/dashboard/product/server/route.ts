@@ -79,15 +79,20 @@ const app = new Hono()
         0
       );
 
+      const discountPercent = body.variants[0].discountPrice
+        ? ((body.variants[0].price - body.variants[0].discountPrice) / body.variants[0].price) * 100
+        : 0;
+
       const variantsData = body.variants.map((variant) => ({
         name: variant.name,
         stock: variant.stock,
         colors: variant.colors,
         price: variant.price,
         discount:
-          variant.discountPrice && variant.discountPrice > 0
-            ? (variant.price - variant.discountPrice) / variant.price
+          variant.discountPrice && variant.discountPrice > 0 && variant.price > 0
+            ? ((variant.price - variant.discountPrice) / variant.price) * 100
             : 0,
+        sellerPrice: variant.sellerPrice,
         discountPrice: variant.discountPrice,
         images: variant.images,
       }));
@@ -101,6 +106,10 @@ const app = new Hono()
           tags: body.tags,
           brandId: body.brandId,
           categoryId: body.categoryId,
+          price: body.variants[0].price,
+          discount: discountPercent,
+          discountPrice: body.variants[0].discountPrice,
+          sellerPrice: body.variants[0].sellerPrice,
           variants: {
             createMany: {
               data: variantsData,
@@ -112,6 +121,64 @@ const app = new Hono()
       return c.json({ success: "Product created successfully" });
     } catch {
       return c.json({ error: "Failed to create product" }, 500);
+    }
+  })
+  .put("/:id", isAdmin, zValidator("json", ProductSchema), async (c) => {
+    const productId = c.req.param("id");
+    const body = c.req.valid("json");
+
+    try {
+      const totalStock = body.variants.reduce(
+        (acc, variant) => acc + variant.stock,
+        0
+      );
+
+      const discountPercent = body.variants[0].discountPrice
+        ? ((body.variants[0].price - body.variants[0].discountPrice) / body.variants[0].price) * 100
+        : 0;
+
+      const variantsData = body.variants.map((variant) => ({
+        name: variant.name,
+        stock: variant.stock,
+        colors: variant.colors,
+        price: variant.price,
+        discount:
+          variant.discountPrice && variant.discountPrice > 0 && variant.price > 0
+            ? ((variant.price - variant.discountPrice) / variant.price) * 100
+            : 0,
+        sellerPrice: variant.sellerPrice,
+        discountPrice: variant.discountPrice,
+        images: variant.images,
+      }));
+
+      await db.product.update({
+        where: { id: productId },
+        data: {
+          name: body.name,
+          shortDescription: body.shortDescription,
+          description: body.description,
+          totalStock,
+          tags: body.tags,
+          brandId: body.brandId,
+          categoryId: body.categoryId,
+          price: body.variants[0].price,
+          discount: discountPercent,
+          discountPrice: body.variants[0].discountPrice,
+          sellerPrice: body.variants[0].sellerPrice,
+        },
+      });
+
+      await db.variant.deleteMany({ where: { productId } });
+      await db.variant.createMany({
+        data: variantsData.map((variant) => ({
+          ...variant,
+          productId,
+        })),
+      });
+
+      return c.json({ success: "Product updated successfully" });
+    } catch {
+      return c.json({ error: "Failed to update product" }, 500);
     }
   })
   .delete(
@@ -679,29 +746,44 @@ const app = new Hono()
       cursor: z.string().optional(),
       query: z.string().optional(),
       sort: z.string().optional(),
-      // category: z.string().optional(),
-      // brand: z.string().optional(),
-      // discount: z.string().optional(),
-      // minPrice: z.string().optional(),
-      // maxPrice: z.string().optional(),
-      // minDiscount: z.string().optional(),
-      // maxDiscount: z.string().optional(),
-      // rating: z.string().optional(),
+      inStock: z.string().optional(),
+      priceMin: z.string().optional(),
+      priceMax: z.string().optional(),
+      discountMin: z.string().optional(),
+      discountMax: z.string().optional(),
+      discount: z.string().optional(),
+      rating: z.string().optional(),
+      category: z.string().optional(),
+      brand: z.string().optional(),
     })),
     async (c) => {
-      const { cursor, query } = c.req.valid("query");
+      const { cursor, query, sort, inStock, priceMin, priceMax, discountMin, discountMax, discount, rating, category, brand } = c.req.valid("query");
 
       const pageSize = 8;
 
       const products = await db.product.findMany({
         where: {
           ...(query && { name: { contains: query, mode: "insensitive" } }),
+          ...(inStock && { totalStock: { gt: 0 } }),
+          ...(priceMin && priceMax !== undefined && { price: { gte: Number(priceMin), lte: Number(priceMax) } }),
+          ...(discountMin && discountMax !== undefined && { discount: { gte: Number(discountMin), lte: Number(discountMax) } }),
+          ...(discount && { discount: { gt: 0 } }),
+          ...(rating && { rating: { gte: Number(rating) } }),
+          ...(category && { categoryId: category }),
+          ...(brand && { brandId: brand }),
         },
         include: {
           variants: true,
           category: true,
         },
         orderBy: {
+          ...(sort === "desc" && { createdAt: "desc" }),
+          ...(sort === "b_desc" && { createdAt: "desc" }),
+          ...(sort === "total_sell_asc" && { totalSold: "asc" }),
+          ...(sort === "price_asc" && { price: "asc" }),
+          ...(sort === "price_desc" && { price: "desc" }),
+          ...(sort === "discount_desc" && { discount: "desc" }),
+          ...(sort === "discount_asc" && { discount: "asc" }),
         },
         take: pageSize + 1,
         cursor: cursor ? { id: cursor } : undefined,

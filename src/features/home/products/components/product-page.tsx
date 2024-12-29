@@ -1,11 +1,15 @@
 "use client"
 
-import { Loader2 } from "lucide-react";
+import { FilterIcon, Loader2, SortAscIcon } from "lucide-react";
+
+import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
 
 import InfiniteScrollContainer from "@/components/infinite-scroll-container";
-import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
 import { useGetProductsHome } from "@/features/dashboard/product/api/use-get-products-home";
 import { Filter } from "./filter";
+import { FilterDrawer } from "./filter-drawer";
+import { SortDrawer } from "./sort-drawer";
 
 export const ProductPage = () => {
     const { products, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useGetProductsHome();
@@ -41,6 +45,27 @@ export const ProductPage = () => {
                             )}
                         </InfiniteScrollContainer>
                     )}
+                </div>
+
+                <div className="md:hidden fixed bottom-0 left-0 w-full h-16 bg-background border-t border-gray-200">
+                    <div className="flex items-center justify-between h-full px-4">
+                        <FilterDrawer>
+                            <Button variant="outline" className="flex items-center gap-x-2">
+                                <FilterIcon className="w-4 h-4" />
+                                Filter
+                            </Button>
+                        </FilterDrawer>
+
+                        <div className="flex items-center gap-x-2">
+                            <p className="text-sm text-gray-500">Sort By</p>
+                            <SortDrawer>
+                                <Button variant="outline" className="flex items-center gap-x-2">
+                                    <SortAscIcon className="w-4 h-4" />
+                                    Sort
+                                </Button>
+                            </SortDrawer>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

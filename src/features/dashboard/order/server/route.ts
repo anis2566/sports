@@ -70,9 +70,29 @@ const app = new Hono()
             const { status } = c.req.valid("json")
 
             try {
-                const order = await db.order.findUnique({ where: { id } })
+                const order = await db.order.findUnique({ where: { id }, include: { orderItems: true } })
                 if (!order) {
                     return c.json({ error: "Order not found" }, 404)
+                }
+
+                if (status === ORDER_STATUS.Cancelled) {
+                    for (const item of order.orderItems) {
+                        await db.$transaction(async (tx) => {
+                            await tx.variant.update({
+                                where: { id: item.variantId },
+                                data: {
+                                    stock: { increment: item.quantity }
+                                }
+                            })
+                            await db.product.update({
+                                where: { id: item.productId },
+                                data: {
+                                    totalSold: { decrement: item.quantity },
+                                    totalStock: { increment: item.quantity }
+                                }
+                            })
+                        })
+                    }
                 }
 
                 await db.order.update({ where: { id }, data: { status } })

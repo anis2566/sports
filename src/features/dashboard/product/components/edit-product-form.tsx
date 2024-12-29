@@ -8,6 +8,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
 import queryString from "query-string"
+import { Product, Variant } from "@prisma/client"
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Form, FormItem, FormLabel, FormControl, FormMessage, FormField } from "@/components/ui/form"
@@ -30,9 +31,17 @@ import { TagsInput } from "@/components/ui/tag-input"
 import { ColorPicker } from "@/components/ui/color-picker"
 import { ImageUploader } from "@/components/ui/image-uploader"
 import { LoadingButton } from "@/components/loading-button"
-import { useCreateProduct } from "../api/use-create-product"
+import { useUpdateProduct } from "../api/use-update-product"
 
-export const ProductForm = () => {
+interface ProductWithVariants extends Product {
+    variants: Variant[]
+}
+
+interface Props {
+    product: ProductWithVariants
+}
+
+export const EditProductForm = ({ product }: Props) => {
     const [categoryQuery, setCategoryQuery] = useState<string>("")
     const [brandQuery, setBrandQuery] = useState<string>("")
 
@@ -42,7 +51,7 @@ export const ProductForm = () => {
     const debouncedQuery = useDebounce(categoryQuery, 500);
     const debouncedBrandQuery = useDebounce(brandQuery, 500);
 
-    const { mutate: createProduct, isPending } = useCreateProduct()
+    const { mutate: updateProduct, isPending } = useUpdateProduct()
 
     const { data: categories, isLoading: isLoadingCategories } = useGetCategoryForSelect()
     const { data: brands, isLoading: isLoadingBrands } = useGetBrandForSelect()
@@ -84,23 +93,21 @@ export const ProductForm = () => {
     const form = useForm<ProductSchemaType>({
         resolver: zodResolver(ProductSchema),
         defaultValues: {
-            name: "",
-            shortDescription: "",
-            description: "",
-            brandId: "",
-            categoryId: "",
-            tags: [],
-            variants: [
-                {
-                    name: "",
-                    stock: 0,
-                    colors: [],
-                    images: [],
-                    price: 0,
-                    discountPrice: 0,
-                    sellerPrice: 0,
-                }
-            ]
+            name: product.name,
+            shortDescription: product.shortDescription || "",
+            description: product.description,
+            brandId: product.brandId,
+            categoryId: product.categoryId,
+            tags: product.tags,
+            variants: product.variants.map((variant) => ({
+                name: variant.name,
+                stock: variant.stock,
+                colors: variant.colors,
+                images: variant.images,
+                price: variant.price,
+                discountPrice: variant.discountPrice || 0,
+                sellerPrice: variant.sellerPrice,
+            }))
         }
     })
 
@@ -115,7 +122,10 @@ export const ProductForm = () => {
     }
 
     const onSubmit = (data: ProductSchemaType) => {
-        createProduct(data)
+        updateProduct({
+            json: data,
+            param: { id: product.id }
+        })
     }
 
     return (
@@ -497,8 +507,8 @@ export const ProductForm = () => {
 
                 <LoadingButton
                     type="submit"
-                    title="Submit"
-                    loadingTitle="Submitting..."
+                    title="Update"
+                    loadingTitle="Updating..."
                     className="mt-4"
                     onClick={form.handleSubmit(onSubmit)}
                     isLoading={isPending}

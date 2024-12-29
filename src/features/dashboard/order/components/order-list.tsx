@@ -72,7 +72,7 @@ export const OrderList = () => {
                                     <TableCell>{order.name}</TableCell>
                                     <TableCell>{order.phone}</TableCell>
                                     <TableCell>{order.orderItems.length}</TableCell>
-                                    <TableCell>{order.totalPrice}</TableCell>
+                                    <TableCell>{order.totalPaidAmount}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline">{order.paymentMethod}</Badge>
                                     </TableCell>

@@ -9,6 +9,7 @@ const ProductVariantSchema = z.object({
     images: z.array(z.string()).min(1, { message: "required" }),
     price: z.number().min(1, { message: "required" }),
     discountPrice: z.number().optional(),
+    sellerPrice: z.number().min(1, { message: "required" }),
 })
 
 export const ProductSchema = z.object({

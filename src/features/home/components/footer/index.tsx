@@ -13,10 +13,10 @@ export const Footer = () => {
                     <div className="col-span-full xl:col-span-2">
                         <Logo callbackUrl="/" />
                         <p className="text-sm text-muted-foreground pl-12">
-                            Nilkhet, Dhaka, Bangladesh
+                            Bongshal, Dhaka, Bangladesh
                         </p>
                         <p className="text-sm text-muted-foreground pl-12">
-                            01749-198072
+                            017907363432
                         </p>
                     </div>
 

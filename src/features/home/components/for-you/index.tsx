@@ -1,5 +1,8 @@
 "use client"
 
+import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
     Carousel,
@@ -11,6 +14,7 @@ import {
 
 import { useGetForYouProducts } from "@/features/home/api/use-get-for-you-products";
 import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
+import { GENRE } from "@/constant";
 
 export const ForYou = () => {
     const { data, isLoading } = useGetForYouProducts();
@@ -18,7 +22,12 @@ export const ForYou = () => {
     return <div className="px-3 md:px-0 space-y-2">
         <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-600">For You</h2>
-            <Button variant="outline" size="sm">View All</Button>
+            <Button variant="outline" size="sm" asChild>
+                <Link href={`/products?genre=${GENRE.ForYou}`}>
+                    <span>View All</span>
+                    <ArrowRightIcon className="w-4 h-4" />
+                </Link>
+            </Button>
         </div>
 
         <Carousel

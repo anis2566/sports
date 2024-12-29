@@ -7,6 +7,7 @@ import { DiscountFilter } from "./discount-filter"
 import { PriceFilter } from "./price-filter"
 import { Sort } from "./sort-filter"
 import { StockFilter } from "./stock-filter"
+import { RatingFilter } from "./rating-filter"
 
 export const Filter = () => {
     const router = useRouter()
@@ -19,6 +20,7 @@ export const Filter = () => {
         <div className="space-y-4 pr-4">
             <Sort />
             <StockFilter />
+            <RatingFilter />
             <PriceFilter />
             <DiscountFilter />
 

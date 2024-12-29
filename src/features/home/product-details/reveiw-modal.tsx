@@ -15,7 +15,7 @@ import { useAddReview } from "@/hooks/use-review";
 import { useCreateReview } from "@/features/dashboard/product/api/use-create-review";
 
 
-export const ReveiwModal = () => {
+export const ReviewModal = () => {
     const { isOpen, productId, onClose } = useAddReview();
 
     const form = useForm<z.infer<typeof ReviewSchema>>({

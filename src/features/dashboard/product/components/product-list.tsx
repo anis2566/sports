@@ -43,6 +43,9 @@ export const ProductList = () => {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Category</TableHead>
                                 <TableHead>Brand</TableHead>
+                                <TableHead>Price</TableHead>
+                                <TableHead>Discount Price</TableHead>
+                                <TableHead>Seller Price</TableHead>
                                 <TableHead>Stock</TableHead>
                                 <TableHead>Variants</TableHead>
                                 <TableHead>Status</TableHead>
@@ -61,6 +64,9 @@ export const ProductList = () => {
                                     <TableCell className="truncate max-w-[200px]">{product.name}</TableCell>
                                     <TableCell>{product.category.name}</TableCell>
                                     <TableCell>{product.brand.name}</TableCell>
+                                    <TableCell>{product.price}</TableCell>
+                                    <TableCell>{product.discountPrice}</TableCell>
+                                    <TableCell>{product.sellerPrice}</TableCell>
                                     <TableCell>{product.totalStock}</TableCell>
                                     <TableCell>{product.variants.length}</TableCell>
                                     <TableCell>
@@ -120,6 +126,9 @@ export const ProductListSkeleton = () => {
             <TableBody>
                 {Array.from({ length: 5 }).map((_, index) => (
                     <TableRow key={index}>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
+                        <TableCell><Skeleton className="w-full h-10" /></TableCell>
                         <TableCell><Skeleton className="w-full h-10" /></TableCell>
                         <TableCell><Skeleton className="w-full h-10" /></TableCell>
                         <TableCell><Skeleton className="w-full h-10" /></TableCell>

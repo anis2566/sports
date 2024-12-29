@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 
 import { ContentLayout } from "@/features/dashboard/components/content-layout";
+import { DashboardPage } from "@/features/dashboard/components/dashboard-page";
 
 export const metadata: Metadata = {
     title: "TomarSports | Dashboard",
@@ -10,9 +11,7 @@ export const metadata: Metadata = {
 const Dashboard = () => {
     return (
         <ContentLayout title="Dashboard">
-            <div className="w-full">
-                <h1>Dashboard</h1>
-            </div>
+            <DashboardPage />
         </ContentLayout>
     )
 };

@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent } from "@/components/ui/card";
 
 export const DiscountFilter = () => {
-    const [value, setValue] = useState([0, 5000]);
+    const [value, setValue] = useState([0, 100]);
 
     const searchParams = useSearchParams()
     const pathname = usePathname()

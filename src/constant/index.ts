@@ -54,6 +54,11 @@ export enum GENDER {
   Other = "Other",
 }
 
+export enum GENRE {
+  Trending = "Trending",
+  ForYou = "For_You",
+}
+
 type UserSidebarNavs = {
   label: string;
   href: string;

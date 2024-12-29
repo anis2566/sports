@@ -150,6 +150,10 @@ model Product {
   totalSold     Int @default(0)
   tags        String[] @default([])
   status      String @default("Active")
+  price       Int @default(0)
+  discount    Int @default(0)
+  discountPrice Int @default(0)
+  sellerPrice Int @default(0)
 
   brandId     String @db.ObjectId
   brand       Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
@@ -180,6 +184,7 @@ model Variant {
   price     Int
   discount    Int?
   discountPrice Int?
+  sellerPrice Int
 
   productId String @db.ObjectId
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)

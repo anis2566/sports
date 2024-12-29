@@ -20,7 +20,7 @@ const app = new Hono()
                 const totalPrice = body.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
                 const totalPaidAmount = totalPrice + body.shippingCharge
 
-                await db.order.create({
+                const order = await db.order.create({
                     data: {
                         ...body,
                         userId,
@@ -41,7 +41,25 @@ const app = new Hono()
                     }
                 })
 
-                return c.json({ success: "Order placed" })
+                for (const item of body.orderItems) {
+                    await db.$transaction(async (tx) => {
+                        await tx.variant.update({
+                            where: { id: item.variantId },
+                            data: {
+                                stock: { decrement: item.quantity }
+                            }
+                        })
+                        await tx.product.update({
+                            where: { id: item.productId },
+                            data: {
+                                totalSold: { increment: item.quantity },
+                                totalStock: { decrement: item.quantity }
+                            }
+                        })
+                    })
+                }
+
+                return c.json({ success: "Order placed", id: order.id })
             } catch {
                 return c.json({ error: "Internal server error" }, 500)
             }

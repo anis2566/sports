@@ -32,6 +32,7 @@ export const useUpdateOrderStatus = ({ onClose }: UseUpdateOrderStatusProps) => 
                     duration: 5000,
                 });
                 queryClient.invalidateQueries({ queryKey: ["orders"] });
+                queryClient.invalidateQueries({ queryKey: ["products"] });
                 onClose();
             }
 

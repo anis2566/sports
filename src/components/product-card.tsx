@@ -59,7 +59,7 @@ export const ProductCard = ({ product }: Props) => {
     }
 
     return (
-        <div className="w-full space-y-2 min-h-[300px] flex flex-col justify-between border relative">
+        <div className="w-full space-y-2 min-h-[380px] flex flex-col justify-between border relative">
             <Link href={`/products/${product.id}`} className="px-2 py-1 group h-full">
                 <div className="w-full space-y-2">
                     <div className="relative aspect-square w-full max-h-[150px]">
@@ -82,10 +82,11 @@ export const ProductCard = ({ product }: Props) => {
                             )
                         }
                         <div className="flex items-center gap-x-1">
-                            {product.variants[0].discountPrice ? (
+                            {product.variants[0].discount ? (
                                 <>
                                 <p className="tracking-wider text-base">৳{product.variants[0].discountPrice}</p>
                                 <p className="tracking-wider text-xs text-red-500 line-through">৳{product.variants[0].price}</p>
+                                <p className="text-xs text-green-500">{product.variants[0].discount}% off</p>
                                 </>
                             ) : (
                                 <p className="tracking-wider text-base">৳{product.variants[0].price}</p>

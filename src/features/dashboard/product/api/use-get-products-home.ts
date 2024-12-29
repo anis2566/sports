@@ -7,13 +7,23 @@ export const useGetProductsHome = () => {
     const searchParams = useSearchParams();
     const cursor = searchParams.get("cursor") || undefined;
     const query = searchParams.get("query") || undefined;
+    const sort = searchParams.get("sort") || undefined;
+    const inStock = searchParams.get("inStock") || undefined;
+    const priceMin = searchParams.get("priceMin") || undefined;
+    const priceMax = searchParams.get("priceMax") || undefined;
+    const discountMin = searchParams.get("discountMin") || undefined;
+    const discountMax = searchParams.get("discountMax") || undefined;
+    const discount = searchParams.get("discount") || undefined;
+    const rating = searchParams.get("rating") || undefined;
+    const category = searchParams.get("category") || undefined;
+    const brand = searchParams.get("brand") || undefined;
 
     const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } =
         useInfiniteQuery({
-            queryKey: ["products-home", query, cursor],
+            queryKey: ["products-home", query, cursor, sort, inStock, priceMin, priceMax, discountMin, discountMax, discount, rating, category, brand],
             queryFn: async () => {
                 const res = await client.api.product.home["$get"]({
-                    query: { cursor, query },
+                    query: { cursor, query, sort, inStock, priceMin, priceMax, discountMin, discountMax, discount, rating, category, brand },
                 });
                 const parseData = await res.json();
                 return {

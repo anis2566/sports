@@ -3,9 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Autoplay from "embla-carousel-autoplay"
+import Link from "next/link";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -22,15 +21,7 @@ import { PAYMENT_METHOD } from "@/constant";
 import { useCreateOrder } from "../api/use-create-order";
 
 export const CheckoutForm = () => {
-    const router = useRouter()
-
     const { cart } = useCart();
-
-    useEffect(() => {
-        if (cart.length === 0) {
-            router.push("/cart")
-        }
-    }, [cart])
 
     const { mutate, isPending } = useCreateOrder()
 
@@ -60,6 +51,17 @@ export const CheckoutForm = () => {
     }
 
     const totalPrice = cart.reduce((acc, item) => acc + (item.quantity * item.price), 0);
+
+    if (cart.length === 0) {
+        return (
+            <div className="w-full min-h-[60vh] flex flex-col items-center justify-center gap-y-4">
+                <h1 className="text-2xl font-semibold text-muted-foreground">Your cart is empty!</h1>
+                <Link href="/">
+                    <Button>Continue shopping</Button>
+                </Link>
+            </div>
+        )
+    }
 
     return (
         <Form {...form}>

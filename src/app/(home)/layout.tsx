@@ -20,7 +20,7 @@ const HomeLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="mt-28 md:mt-0">
                 {children}
             </div>
-            <Separator />
+            <Separator className="mt-20" />
             <Footer />
         </div>
     )

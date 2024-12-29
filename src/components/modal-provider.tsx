@@ -7,7 +7,7 @@ import { DeleteBannerModal } from "@/features/dashboard/banner/components/delete
 import { CartModal } from "@/features/home/cart/components/cart-modal";
 import { OrderStatusModal } from "@/features/dashboard/order/components/status-modal";
 import { DeleteOrderModal } from "@/features/dashboard/order/components/delete-modal";
-import { ReveiwModal } from "@/features/home/product-details/reveiw-modal";
+import { ReviewModal } from "@/features/home/product-details/reveiw-modal";
 import { ReviewViewModal } from "@/features/dashboard/review/components/view-modal";
 import { DeleteReviewModal } from "@/features/dashboard/review/components/delete-modal";
 import { QuestionModal } from "@/features/home/product-details/question-modal";
@@ -26,7 +26,7 @@ export const ModalProvider = () => {
             <CartModal />
             <OrderStatusModal />
             <DeleteOrderModal />
-            <ReveiwModal />
+            <ReviewModal />
             <ReviewViewModal />
             <DeleteReviewModal />
             <QuestionModal />
