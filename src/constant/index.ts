@@ -9,6 +9,7 @@ export const AUTH_COOKIE = "access-token"
 export enum ROLE {
   User = "User",
   Admin = "Admin",
+  Seller = "Seller",
 }
 
 export enum STATUS {

@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { isAdmin, sessionMiddleware } from "@/lib/session-middleware";
 import { ProductSchema } from "../schema";
 import { QuestionSchema, ReviewSchema } from "@/features/home/products/schemas";
-import { ORDER_STATUS } from "@/constant";
+import { ORDER_STATUS, PRODUCT_STATUS } from "@/constant";
 
 const app = new Hono()
   .get(
@@ -799,5 +799,25 @@ const app = new Hono()
       return c.json(data);
     }
   )
-
+  .get(
+    "/stat",
+    isAdmin,
+    async (c) => {
+      const [totalProduct, activeProduct, inactiveProduct, outOfStockProduct] = await Promise.all([
+        db.product.count(),
+        db.product.count({
+          where: {
+            status: PRODUCT_STATUS.Active
+          }
+        }),
+        db.product.count({
+          where: {
+            status: PRODUCT_STATUS.Inactive
+          }
+        }),
+        db.product.count({ where: { totalStock: 0 } }),
+      ]);
+      return c.json({ totalProduct, activeProduct, inactiveProduct, outOfStockProduct });
+    }
+  )
 export default app;

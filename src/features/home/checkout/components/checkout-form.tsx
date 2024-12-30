@@ -12,6 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import { Textarea } from "@/components/ui/textarea";
 
 import { LoadingButton } from "@/components/loading-button";
 import { useCart } from "@/hooks/use-cart";
@@ -19,9 +22,14 @@ import { cn } from "@/lib/utils";
 import { OrderSchema, OrderSchemaType } from "../schema";
 import { PAYMENT_METHOD } from "@/constant";
 import { useCreateOrder } from "../api/use-create-order";
+import { useGetCities } from "../api/use-get-cities";
+import { useGetAreas } from "../api/use-get-areas";
+import { useGetZones } from "../api/use-get-zones";
 
 export const CheckoutForm = () => {
     const { cart } = useCart();
+
+    const { data: cities, isLoading: isCitiesLoading } = useGetCities()
 
     const { mutate, isPending } = useCreateOrder()
 
@@ -31,9 +39,10 @@ export const CheckoutForm = () => {
             name: "",
             phone: "",
             altPhone: "",
-            city: "",
-            area: "",
-            zone: "",
+            cityId: "",
+            areaId: "",
+            zoneId: "",
+            address: "",
             shippingCharge: 100,
             paymentMethod: undefined,
             orderItems: cart.map((item) => ({
@@ -45,6 +54,9 @@ export const CheckoutForm = () => {
             })),
         }
     })
+
+    const { data: areas, isLoading: isAreasLoading } = useGetAreas(form.watch("cityId") || undefined)
+    const { data: zones, isLoading: isZonesLoading } = useGetZones(form.watch("areaId") || undefined)
 
     const onSubmit = (data: OrderSchemaType) => {
         mutate(data)
@@ -120,13 +132,31 @@ export const CheckoutForm = () => {
                             <div className="grid md:grid-cols-2 gap-4">
                                 <FormField
                                     control={form.control}
-                                    name="city"
+                                    name="cityId"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>City</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} disabled={isPending} />
-                                            </FormControl>
+                                            <Select
+                                                onValueChange={value => {
+                                                    field.onChange(value)
+                                                    form.setValue("areaId", "")
+                                                }}
+                                                defaultValue={field.value}
+                                                disabled={isCitiesLoading || isPending}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select a city" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {
+                                                        cities?.map((city) => (
+                                                            <SelectItem key={city.cityId} value={city.id}>{city.nameBangla}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -134,33 +164,72 @@ export const CheckoutForm = () => {
 
                                 <FormField
                                     control={form.control}
-                                    name="area"
+                                    name="areaId"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Area</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} disabled={isPending} />
-                                            </FormControl>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isAreasLoading || isPending}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select an area" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {
+                                                        areas?.map((area) => (
+                                                            <SelectItem key={area.areaId} value={area.id}>{area.nameBangla}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
 
-                                <FormField
-                                    control={form.control}
-                                    name="zone"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Zone</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} disabled={isPending} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <Collapsible open={zones && zones.length > 0}>
+                                    <CollapsibleContent>
+                                        <FormField
+                                            control={form.control}
+                                            name="zoneId"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Zone</FormLabel>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isZonesLoading || isPending}>
+                                                        <FormControl>
+                                                            <SelectTrigger>
+                                                                <SelectValue placeholder="Select a zone" />
+                                                            </SelectTrigger>
+                                                        </FormControl>
+                                                        <SelectContent>
+                                                            {
+                                                                zones?.map((zone) => (
+                                                                    <SelectItem key={zone.zoneId} value={zone.id}>{zone.nameBangla}</SelectItem>
+                                                                ))
+                                                            }
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CollapsibleContent>
+                                </Collapsible>
 
                             </div>
+                            <FormField
+                                control={form.control}
+                                name="address"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Full Address</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field} disabled={isPending} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </CardContent>
                     </Card>
 

@@ -15,9 +15,10 @@ export const OrderSchema = z.object({
     name: requiredString,
     phone: requiredString.length(11, { message: "invalid phone number" }),
     altPhone: z.string().optional(),
-    city: requiredString,
-    area: requiredString,
-    zone: z.string().optional(),
+    cityId: requiredString,
+    areaId: requiredString,
+    zoneId: z.string().optional(),
+    address: requiredString,
     shippingCharge: z.number().min(1, { message: "required" }),
     orderItems: z.array(OrderItemSchema),
     paymentMethod: z

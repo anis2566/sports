@@ -35,6 +35,9 @@ const DetailOrder = async ({ params }: Props) => {
                     variant: true
                 }
             },
+            city: true,
+            area: true,
+            zone: true,
         }
     })
 
@@ -111,15 +114,19 @@ const DetailOrder = async ({ params }: Props) => {
                             </div>
                             <div>
                                 <p className="text-sm font-semibold">City</p>
-                                <p className="text-muted-foreground">{order.city}</p>
+                                <p className="text-muted-foreground">{order.city.nameBangla}</p>
                             </div>
                             <div>
                                 <p className="text-sm font-semibold">Thana</p>
-                                <p className="text-muted-foreground">{order.area}</p>
+                                <p className="text-muted-foreground">{order.area.nameBangla}</p>
                             </div>
                             <div>
                                 <p className="text-sm font-semibold">Zone</p>
-                                <p className="text-muted-foreground">{order.zone}</p>
+                                <p className="text-muted-foreground">{order.zone?.nameBangla}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold">Address</p>
+                                <p className="text-muted-foreground">{order.address}</p>
                             </div>
                         </CardContent>
                     </Card>

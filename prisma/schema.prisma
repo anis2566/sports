@@ -34,6 +34,8 @@ model User {
   dob           DateTime?
   gender        String?
   phone         String?
+  
+  seller Seller?
 
   accounts      Account[]
   sessions      Session[]
@@ -213,10 +215,8 @@ model Order {
   name      String
   phone     String
   altPhone  String?
-  city      String
-  area      String
-  zone      String?
   month     Month
+  address   String
 
   totalPrice Float
   shippingCharge Float
@@ -225,6 +225,15 @@ model Order {
   status String @default("Pending")
   paymentMethod String @default("COD")
   paymentStatus String @default("Pending")
+
+  cityId String @db.ObjectId
+  city   City @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  areaId String @db.ObjectId
+  area   Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  zoneId String? @db.ObjectId
+  zone   Zone? @relation(fields: [zoneId], references: [id], onDelete: Cascade)
 
   userId    String   @db.ObjectId
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -308,3 +317,67 @@ model Answer {
   updatedAt DateTime @updatedAt
 }
 
+
+model Seller {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  businessName String
+  phone     String
+  email     String
+  address   String?
+  documentUrl String
+  imageUrl String
+  status    String @default("Pending")
+
+  userId String @db.ObjectId @unique
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model City {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  nameBangla String
+  cityId    Int @unique
+
+  areas Area[]
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Area {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  nameBangla String
+  areaId    Int @unique
+
+  cityId String @db.ObjectId
+  city   City @relation(fields: [cityId], references: [id], onDelete: Cascade)
+
+  zones Zone[]
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Zone {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  nameBangla String
+  zoneId    Int @unique
+
+  areaId String @db.ObjectId
+  area   Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

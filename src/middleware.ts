@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 import { getCurrent } from "./features/auth/server/action";
 import { ROLE } from "./constant";
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ["/dashboard", "/seller"];
 
 export async function middleware(request: NextRequest) {
   const user = await getCurrent();
@@ -13,8 +13,10 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
   const isAdminRoute = request.nextUrl.pathname.startsWith("/dashboard");
+  const isSellerRoute = request.nextUrl.pathname.startsWith("/seller");
 
   const isAdmin = user?.role === ROLE.Admin;
+  const isSeller = user?.role === ROLE.Seller;
 
   if (!user && isProtected) {
     const signInUrl = new URL("/auth/sign-in", request.nextUrl);
@@ -30,9 +32,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(dashboardUrl);
   }
 
+  if (isSellerRoute && !isSeller) {
+    const sellerUrl = new URL("/seller/register", request.nextUrl);
+    return NextResponse.redirect(sellerUrl);
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: "/dashboard/:path*",
+  matcher: ["/dashboard/:path*", "/seller/:path*"],
 };
