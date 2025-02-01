@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { LoadingButton } from "@/components/loading-button";
-import { useDeleteQuestion as useDeleteQuestionApi } from "@/features/dashboard/product/api/use-delete-question";
 import { useDeleteQuestion } from "@/hooks/use-question";
+import { useDeleteQuestion as useDeleteQuestionApi } from "../api/use-delete-question";
 
 export const DeleteQuestionModal = () => {
     const { isOpen, questionId, onClose } = useDeleteQuestion();

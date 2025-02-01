@@ -5,15 +5,17 @@ import { cors } from "hono/cors";
 // export const runtime = "edge";
 
 import authApp from "@/features/auth/server/route";
-import brandApp from "@/features/dashboard/brand/server/route";
-import categoryApp from "@/features/dashboard/category/server/route";
-import productApp from "@/features/dashboard/product/server/route";
+import brandApp from "@/server/brand/route";
+import categoryApp from "@/server/category/route";
+import productApp from "@/server/product/route";
 import homeApp from "@/features/home/server/route";
-import bannerApp from "@/features/dashboard/banner/server/route";
+import bannerApp from "@/server/banner/route";
 import checkoutApp from "@/features/home/checkout/server/route";
-import orderApp from "@/features/dashboard/order/server/route";
-import userApp from "@/features/home/user/server/route";
-import dashboardApp from "@/features/dashboard/server/route";
+import orderApp from "@/server/order/route";
+import questionApp from "@/server/question/route";
+import reviewApp from "@/server/review/route";
+import userApp from "@/server/user/route";
+import dashboardApp from "@/server/dashboard/route";
 
 const app = new Hono()
   .basePath("/api")
@@ -26,6 +28,8 @@ const app = new Hono()
   .route("/banner", bannerApp)
   .route("/checkout", checkoutApp)
   .route("/order", orderApp)
+  .route("/question", questionApp)
+  .route("/review", reviewApp)
   .route("/user", userApp)
   .route("/dashboard", dashboardApp)
 

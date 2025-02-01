@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { useAddQuestion } from "@/hooks/use-question";
-import { useGetQuestions } from "@/features/dashboard/product/api/use-get-questions";
+import { useGetQuestions } from "./api/use-get-questions";
 
 interface QuestionsProps {
     productId: string;

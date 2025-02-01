@@ -9,18 +9,18 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useGetQuestionsAdmin } from "../../product/api/use-get-questions-admin";
 import { CustomPagination } from "@/components/custom-pagination";
 import { EmptyStat } from "@/components/empty-stat";
 import { Header } from "../../brand/components/header";
 import { useViewQuestion, useDeleteQuestion, useAnswerQuestion } from "@/hooks/use-question";
+import { useGetQuestions } from "../api/use-get-questions";
 
 export const QuestionList = () => {
     const { onOpen } = useViewQuestion();
     const { onOpen: onOpenDeleteQuestion } = useDeleteQuestion();
     const { onOpen: onOpenAnswerQuestion } = useAnswerQuestion();
 
-    const { data, isLoading } = useGetQuestionsAdmin();
+    const { data, isLoading } = useGetQuestions();
 
     return (
         <Card>

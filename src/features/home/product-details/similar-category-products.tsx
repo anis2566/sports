@@ -9,8 +9,8 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 
-import { useGetSimilarCategoryProducts } from "@/features/dashboard/product/api/use-get-similar-category-products";
 import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
+import { useGetSimilarCategoryProducts } from "./api/use-get-similar-category-products";
 
 export const SimilarCategoryProducts = ({ categoryId }: { categoryId: string }) => {
     const { data, isLoading } = useGetSimilarCategoryProducts(categoryId);

@@ -11,8 +11,8 @@ export const useGetReviews = (id: string) => {
     useInfiniteQuery({
       queryKey: ["reviews", id],
       queryFn: async () => {
-        const res = await client.api.product.reviews[":id"]["$get"]({
-          param: { id },
+        const res = await client.api.review[":productId"]["$get"]({
+          param: { productId: id },
           query: { cursor },
         });
         const parseData = await res.json();

@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof client.api.user.reviews["$get"]>;
+type ResponseType = InferResponseType<typeof client.api.review.user["$get"]>;
 
 export const useGetReviews = () => {
     const searchParams = useSearchParams();
@@ -15,7 +15,7 @@ export const useGetReviews = () => {
     const query = useQuery<ResponseType>({
         queryKey: ["user-reviews", page, limit, sort],
         queryFn: async () => {
-            const res = await client.api.user.reviews["$get"]({
+            const res = await client.api.review.user["$get"]({
                 query: { page, limit, sort },
             });
             const parseData = await res.json();

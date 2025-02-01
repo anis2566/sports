@@ -6,13 +6,13 @@ import { ProductCard, ProductCardSkeleton } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 
 import InfiniteScrollContainer from "@/components/infinite-scroll-container";
-import { useGetProductsHome } from "@/features/dashboard/product/api/use-get-products-home";
 import { Filter } from "./filter";
 import { FilterDrawer } from "./filter-drawer";
 import { SortDrawer } from "./sort-drawer";
+import { useGetProducts } from "../api/use-get-products";
 
 export const ProductPage = () => {
-    const { products, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useGetProductsHome();
+    const { products, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status } = useGetProducts();
 
     return (
         <div className="px-0 mt-4 relative min-h-screen">

@@ -5,10 +5,10 @@ import { toast } from "sonner";
 import { client } from "@/lib/rpc";
 
 type RequestType = InferRequestType<
-    (typeof client.api.product.question)[":id"]["$delete"]
+    (typeof client.api.question)[":id"]["$delete"]
 >;
 type ResponseType = InferResponseType<
-    (typeof client.api.product.question)[":id"]["$delete"]
+    (typeof client.api.question)[":id"]["$delete"]
 >;
 
 interface Props {
@@ -20,7 +20,7 @@ export const useDeleteQuestion = ({ onClose }: Props) => {
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ param }) => {
-            const res = await client.api.product.question[":id"]["$delete"]({
+            const res = await client.api.question[":id"]["$delete"]({
                 param: { id: param.id },
             });
             return await res.json();

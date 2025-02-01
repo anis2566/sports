@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ReviewSchema } from "@/features/home/products/schemas";
 import { LoadingButton } from "@/components/loading-button";
 import { useAddReview } from "@/hooks/use-review";
-import { useCreateReview } from "@/features/dashboard/product/api/use-create-review";
+import { useCreateReview } from "@/features/home/product-details/api/use-create-review";
 
 
 export const ReviewModal = () => {

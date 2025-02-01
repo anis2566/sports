@@ -18,7 +18,7 @@ const app = new Hono().put(
     })
   ),
   zValidator("json", UserSchema),
-  async (c) => {
+  async (c) => { 
     const user = c.get("user");
     const body = c.req.valid("json");
 

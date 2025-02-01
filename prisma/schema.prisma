@@ -129,9 +129,9 @@ model Category {
   imageUrl  String
   description String?
   isFeatured Boolean @default(false)
-  genre       String?
+  genre       String[] @default([])
   status      String @default("Active")
-  tags        String[]
+  tags        String[] @default([])
 
   products Product[]
 
@@ -156,6 +156,7 @@ model Product {
   discount    Int @default(0)
   discountPrice Int @default(0)
   sellerPrice Int @default(0)
+  genre       String[] @default([])
 
   brandId     String @db.ObjectId
   brand       Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)

@@ -21,7 +21,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils";
 import { ProductWithRelations, useCart, useOpenCartModal, VariantWithExtended } from "@/hooks/use-cart";
 import { useWishlist } from "@/hooks/use-wishlist";
-import { useGetTopReviews } from "@/features/dashboard/product/api/use-get-top-reviews";
+import { useGetTopReviews } from "./api/use-get-top-reviews";
 
 interface Props {
     product: ProductWithRelations
@@ -34,7 +34,7 @@ export default function ProductInfo({ product, activeVariant, setActiveVariant }
 
     const { addToCart } = useCart()
     const { addToWishlist } = useWishlist()
-    const { onOpen} = useOpenCartModal()
+    const { onOpen } = useOpenCartModal()
 
     const { data: reviews, isFetching } = useGetTopReviews(product.id)
 

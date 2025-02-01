@@ -12,7 +12,7 @@ import { LoadingButton } from "@/components/loading-button";
 import { useAddQuestion } from "@/hooks/use-question";
 import { QuestionSchema } from "../products/schemas";
 import { QuestionSchemaType } from "../products/schemas";
-import { useCreateQuestion } from "@/features/dashboard/product/api/use-create-question";
+import { useCreateQuestion } from "./api/use-create-question";
 
 export const QuestionModal = () => {
     const { isOpen, productId, onClose } = useAddQuestion();

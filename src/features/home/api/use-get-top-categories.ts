@@ -3,13 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/rpc";
 import { InferResponseType } from "hono";
 
-type ResponseType = InferResponseType<typeof client.api.home.topCategories.$get>;
+type ResponseType = InferResponseType<typeof client.api.category.home.top.$get>;
 
 export const useGetTopCategories = () => {
   const query = useQuery<ResponseType>({
     queryKey: ["home-top-categories"],
     queryFn: async () => {
-      const res = await client.api.home.topCategories.$get();
+      const res = await client.api.category.home.top.$get();
       const parseData = await res.json();
       return {
         categories: parseData.categories,

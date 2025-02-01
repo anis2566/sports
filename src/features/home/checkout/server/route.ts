@@ -18,16 +18,23 @@ const app = new Hono()
 
             try {
 
-                const totalPrice = body.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-                const totalPaidAmount = totalPrice + body.shippingCharge
+                const totalPrice = body.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0
+                const totalPaidAmount = totalPrice + body.shippingCharge || 0
 
                 const order = await db.order.create({
                     data: {
-                        ...body,
+                        name: body.name,
+                        phone: body.phone,
+                        altPhone: body.altPhone,
+                        address: body.address,
+                        shippingCharge: body.shippingCharge,
                         userId,
                         month: Object.values(Month)[new Date().getMonth()],
                         totalPrice,
                         totalPaidAmount,
+                        cityId: body.cityId,
+                        areaId: body.areaId,
+                        paymentMethod: body.paymentMethod,
                         orderItems: {
                             createMany: {
                                 data: body.orderItems.map((item) => ({
@@ -61,7 +68,8 @@ const app = new Hono()
                 }
 
                 return c.json({ success: "Order placed", id: order.id })
-            } catch {
+            } catch (error) {
+                console.log(error)
                 return c.json({ error: "Internal server error" }, 500)
             }
         }

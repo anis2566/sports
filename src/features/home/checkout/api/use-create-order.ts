@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { client } from "@/lib/rpc";
 import { useCart } from "@/hooks/use-cart";
 
-type ResponseType = InferResponseType<typeof client.api.checkout.$post>;
+type ResponseType = InferResponseType<typeof client.api.order.$post>;
 type RequestType = InferRequestType<
-    typeof client.api.checkout.$post
+    typeof client.api.order.$post
 >["json"];
 
 export const useCreateOrder = () => {
@@ -17,7 +17,7 @@ export const useCreateOrder = () => {
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async (json) => {
-            const res = await client.api.checkout.$post({ json });
+            const res = await client.api.order.$post({ json });
             return await res.json();
         },
         onSuccess: (data) => {

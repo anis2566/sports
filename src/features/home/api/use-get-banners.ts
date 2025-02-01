@@ -3,13 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/rpc";
 import { InferResponseType } from "hono";
 
-type ResponseType = InferResponseType<typeof client.api.home.banners.$get>;
+type ResponseType = InferResponseType<typeof client.api.banner.home.$get>;
 
 export const useGetBanners = () => {
   const query = useQuery<ResponseType>({
     queryKey: ["home-banners"],
     queryFn: async () => {
-      const res = await client.api.home.banners.$get();
+      const res = await client.api.banner.home.$get();
       const parseData = await res.json();
       return {
         banners: parseData.banners,

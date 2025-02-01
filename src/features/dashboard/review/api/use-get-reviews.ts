@@ -4,9 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { client } from "@/lib/rpc";
 import { InferResponseType } from "hono";
 
-type ResponseType = InferResponseType<typeof client.api.product.review.admin.$get>;
+type ResponseType = InferResponseType<typeof client.api.review.$get>;
 
-export const useGetReviewAdmin = () => {
+export const useGetReview = () => {
     const searchParams = useSearchParams();
     const page = searchParams.get("page") || undefined;
     const limit = searchParams.get("limit") || undefined;
@@ -16,7 +16,7 @@ export const useGetReviewAdmin = () => {
     const query = useQuery<ResponseType>({
         queryKey: ["admin-reviews", page, limit, sort, q],
         queryFn: async () => {
-            const res = await client.api.product.review.admin.$get({
+            const res = await client.api.review.$get({
                 query: { page, limit, sort, query: q },
             });
             const parseData = await res.json();

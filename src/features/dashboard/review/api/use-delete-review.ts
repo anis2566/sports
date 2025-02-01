@@ -5,10 +5,10 @@ import { toast } from "sonner";
 import { client } from "@/lib/rpc";
 
 type RequestType = InferRequestType<
-    (typeof client.api.product.review)[":id"]["$delete"]
+    (typeof client.api.review)[":id"]["$delete"]
 >;
 type ResponseType = InferResponseType<
-    (typeof client.api.product.review)[":id"]["$delete"]
+    (typeof client.api.review)[":id"]["$delete"]
 >;
 
 interface Props {
@@ -20,7 +20,7 @@ export const useDeleteReview = ({ onClose }: Props) => {
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ param }) => {
-            const res = await client.api.product.review[":id"]["$delete"]({
+            const res = await client.api.review[":id"]["$delete"]({
                 param: { id: param.id },
             });
             return await res.json();

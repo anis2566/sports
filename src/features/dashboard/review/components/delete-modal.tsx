@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { LoadingButton } from "@/components/loading-button";
-import { useDeleteReview as useDeleteReviewApi } from "@/features/dashboard/product/api/use-delete-review";
+import { useDeleteReview as useDeleteReviewApi } from "../api/use-delete-review";
 import { useDeleteReview } from "@/hooks/use-review";
 
 export const DeleteReviewModal = () => {

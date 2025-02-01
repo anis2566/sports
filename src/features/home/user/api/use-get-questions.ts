@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof client.api.user.questions["$get"]>;
+type ResponseType = InferResponseType<typeof client.api.question.user["$get"]>;
 
 export const useGetQuestions = () => {
     const searchParams = useSearchParams();
@@ -15,7 +15,7 @@ export const useGetQuestions = () => {
     const query = useQuery<ResponseType>({
         queryKey: ["user-questions", page, limit, sort],
         queryFn: async () => {
-            const res = await client.api.user.questions["$get"]({
+            const res = await client.api.question.user["$get"]({
                 query: { page, limit, sort },
             });
             const parseData = await res.json();

@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof client.api.brand.create.$post>;
+type ResponseType = InferResponseType<typeof client.api.brand.$post>;
 type RequestType = InferRequestType<
-  typeof client.api.brand.create.$post
+  typeof client.api.brand.$post
 >["json"];
 
 export const useCreateBrand = () => {
@@ -16,7 +16,7 @@ export const useCreateBrand = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
-      const res = await client.api.brand.create.$post({ json });
+      const res = await client.api.brand.$post({ json });
       return await res.json();
     },
     onSuccess: (data) => {

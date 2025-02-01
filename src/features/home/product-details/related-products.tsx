@@ -13,7 +13,7 @@ import {
     CarouselItem,
 } from "@/components/ui/carousel"
 
-import { useGetRelatedProducts } from "@/features/dashboard/product/api/use-get-realted-product";
+import { useGetRelatedProducts } from "./api/use-get-realted-product";
 
 interface Props {
     categoryId: string;

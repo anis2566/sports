@@ -9,10 +9,10 @@ import { client } from "@/lib/rpc";
 import { ReviewSchema } from "@/features/home/products/schemas";
 
 type ResponseType = InferResponseType<
-  (typeof client.api.product.review)[":id"]["$post"]
+  (typeof client.api.review)[":productId"]["$post"]
 >;
 type RequestType = InferRequestType<
-  (typeof client.api.product.review)[":id"]["$post"]
+  (typeof client.api.review)[":productId"]["$post"]
 >;
 
 interface UseCreateReviewProps {
@@ -26,9 +26,9 @@ export const useCreateReview = ({ onClose, form }: UseCreateReviewProps) => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json, param }) => {
-      const res = await client.api.product.review[":id"]["$post"]({
+      const res = await client.api.review[":productId"]["$post"]({
         json: json,
-        param: { id: param.id },
+        param: { productId: param.productId },
       });
       return await res.json();
     },

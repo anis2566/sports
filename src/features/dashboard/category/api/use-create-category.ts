@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 
 import { client } from "@/lib/rpc";
 
-type ResponseType = InferResponseType<typeof client.api.category.create.$post>;
-type RequestType = InferRequestType<
-  typeof client.api.category.create.$post
->["json"];
+type ResponseType = InferResponseType<typeof client.api.category.$post>;
+type RequestType = InferRequestType<typeof client.api.category.$post>["json"];
 
 export const useCreateCategory = () => {
   const router = useRouter();
@@ -16,7 +14,7 @@ export const useCreateCategory = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
-      const res = await client.api.category.create.$post({ json });
+      const res = await client.api.category.$post({ json });
       return await res.json();
     },
     onSuccess: (data) => {

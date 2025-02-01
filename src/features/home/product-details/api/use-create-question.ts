@@ -9,10 +9,10 @@ import { client } from "@/lib/rpc";
 import { QuestionSchema } from "@/features/home/products/schemas";
 
 type ResponseType = InferResponseType<
-    (typeof client.api.product.question)[":id"]["$post"]
+    (typeof client.api.question)[":id"]["$post"]
 >;
 type RequestType = InferRequestType<
-    (typeof client.api.product.question)[":id"]["$post"]
+    (typeof client.api.question)[":id"]["$post"]
 >;
 
 interface UseCreateQuestionProps {
@@ -26,7 +26,7 @@ export const useCreateQuestion = ({ onClose, form }: UseCreateQuestionProps) => 
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
         mutationFn: async ({ json, param }) => {
-            const res = await client.api.product.question[":id"]["$post"]({
+            const res = await client.api.question[":id"]["$post"]({
                 json: json,
                 param: { id: param.id },
             });

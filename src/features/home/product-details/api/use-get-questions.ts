@@ -11,8 +11,8 @@ export const useGetQuestions = (id: string) => {
         useInfiniteQuery({
             queryKey: ["questions", id],
             queryFn: async () => {
-                const res = await client.api.product.questions[":id"]["$get"]({
-                    param: { id },
+                const res = await client.api.question[":productId"]["$get"]({
+                    param: { productId: id },
                     query: { cursor },
                 });
                 const parseData = await res.json();

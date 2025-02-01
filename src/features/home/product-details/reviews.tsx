@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { useAddReview } from "@/hooks/use-review";
-import { useGetReviews } from "@/features/dashboard/product/api/use-get-reviews";
+import { useGetReviews } from "./api/use-get-reviews";
 
 interface ReviewsProps {
     productId: string;

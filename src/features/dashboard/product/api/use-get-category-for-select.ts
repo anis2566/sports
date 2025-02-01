@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { client } from "@/lib/rpc";
 
 type ResponseType = InferResponseType<
-    typeof client.api.product.categoryForSelect.$get
+    typeof client.api.category.forSelect.$get
 >;
 
 export const useGetCategoryForSelect = () => {
@@ -15,7 +15,7 @@ export const useGetCategoryForSelect = () => {
     const query = useQuery<ResponseType>({
         queryKey: ["categoryForSelect", categoryQuery],
         queryFn: async () => {
-            const res = await client.api.product.categoryForSelect.$get({
+            const res = await client.api.category.forSelect.$get({
                 query: {
                     query: categoryQuery,
                 },

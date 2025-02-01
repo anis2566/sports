@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { client } from "@/lib/rpc";
 
 type RequestType = InferRequestType<
-  (typeof client.api.brand.edit)[":id"]["$put"]
+  (typeof client.api.brand)[":id"]["$put"]
 >;
 type ResponseType = InferResponseType<
-  (typeof client.api.brand.edit)[":id"]["$put"]
+  (typeof client.api.brand)[":id"]["$put"]
 >;
 
 export const useUpdateBrand = () => {
@@ -18,7 +18,7 @@ export const useUpdateBrand = () => {
 
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ json, param }) => {
-      const res = await client.api.brand.edit[":id"]["$put"]({
+      const res = await client.api.brand[":id"]["$put"]({
         json,
         param: { id: param.id },
       });

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useGetReviewAdmin } from "../../product/api/use-get-review-admin";
+import { useGetReview } from "../api/use-get-reviews";
 import { useDeleteReview, useViewReview } from "@/hooks/use-review";
 import { CustomPagination } from "@/components/custom-pagination";
 import { EmptyStat } from "@/components/empty-stat";
@@ -19,7 +19,7 @@ export const ReviewList = () => {
     const { onOpen } = useViewReview();
     const { onOpen: onOpenDeleteReview } = useDeleteReview();
 
-    const { data, isLoading } = useGetReviewAdmin();
+    const { data, isLoading } = useGetReview();
 
     return (
         <Card>
