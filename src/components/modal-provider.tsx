@@ -15,6 +15,7 @@ import { QuestionViewModal } from "@/features/dashboard/question/components/view
 import { DeleteQuestionModal } from "@/features/dashboard/question/components/delete-modal";
 import { QuestionReplyModal } from "@/features/dashboard/question/components/reply-modal";
 import { UserQuestionViewModal } from "@/features/home/user/questions/components/view-modal";
+import { GenreModal } from "@/features/dashboard/product/components/genre-modal";
 
 export const ModalProvider = () => {
     return (
@@ -34,6 +35,7 @@ export const ModalProvider = () => {
             <DeleteQuestionModal />
             <QuestionReplyModal />
             <UserQuestionViewModal />
+            <GenreModal />
         </>
     )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { Edit, MoreVerticalIcon, Package, Trash2 } from "lucide-react"
+import { Edit, MoreVerticalIcon, Package, RefreshCcw, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 
@@ -13,16 +13,17 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Badge } from "@/components/ui/badge"
 
 import { EmptyStat } from "@/components/empty-stat"
-import { useDeleteProduct } from "@/hooks/use-product"
+import { useChangeGenre, useDeleteProduct } from "@/hooks/use-product"
 import { useGetProducts } from "../api/use-get-products"
 import { CustomPagination } from "@/components/custom-pagination"
-import { PRODUCT_STATUS } from "@/constant"
+import { GENRE, PRODUCT_STATUS } from "@/constant"
 import { Header } from "./header"
 import { useGetProductStat } from "../api/use-get-product-stat"
 import { ProductStat } from "./product-stat"
 
 export const ProductList = () => {
     const { onOpen } = useDeleteProduct()
+    const { onOpen: onOpenChangeGenre } = useChangeGenre()
 
     const searchParams = useSearchParams()
     const limit = parseInt(searchParams.get("limit") || "5")
@@ -97,6 +98,10 @@ export const ProductList = () => {
                                                             <Edit className="w-5 h-5" />
                                                             <p>Edit</p>
                                                         </Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="flex items-center gap-x-3" onClick={() => onOpenChangeGenre(product.id, product.genre as GENRE[])}>
+                                                        <RefreshCcw className="w-5 h-5" />
+                                                        <p>Change Genre</p>
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem className="flex items-center gap-x-3 text-rose-500 group" onClick={() => onOpen(product.id)}>
                                                         <Trash2 className="w-5 h-5 group-hover:text-rose-600" />

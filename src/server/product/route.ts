@@ -10,7 +10,7 @@ import { PRODUCT_STATUS } from "@/constant";
 const app = new Hono()
     .post("/", isAdmin, zValidator("json", ProductSchema), async (c) => {
         const body = c.req.valid("json");
-        try { 
+        try {
             const totalStock = body.variants.reduce(
                 (acc, variant) => acc + variant.stock,
                 0
