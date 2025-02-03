@@ -3,7 +3,6 @@ import {
     LucideIcon,
     List,
     Layers3,
-    BookOpen,
     MessageCircleQuestion,
     PlusCircle,
     MessageCircleWarning,
@@ -14,6 +13,8 @@ import {
     UserCheck,
     Ribbon,
     Package,
+    Store,
+    ShoppingBag,
 } from "lucide-react";
 
 type Submenu = {
@@ -220,43 +221,23 @@ export function getSellerMenuList(pathname: string): Group[] {
             groupLabel: "Main",
             menus: [
                 {
-                    href: "",
-                    label: "Books",
-                    active: pathname.includes("/seller/books"),
-                    icon: BookOpen,
-                    submenus: [
-                        {
-                            href: "/seller/books/new",
-                            label: "New",
-                            active: pathname === "/seller/books/new",
-                            icon: PlusCircle,
-                        },
-                        {
-                            href: "/seller/books",
-                            label: "List",
-                            active: pathname === "/seller/books",
-                            icon: List,
-                        },
-                    ],
+                    href: "/seller/marketplace",
+                    label: "Marketplace",
+                    active: pathname.includes("/seller/marketplace"),
+                    icon: Store,
+                    submenus: [],
                 },
                 {
                     href: "/seller/orders",
                     label: "Orders",
                     active: pathname.includes("/seller/orders"),
-                    icon: CalendarArrowUp,
+                    icon: ShoppingBag,
                     submenus: [],
                 },
                 {
-                    href: "/seller/reviews",
-                    label: "Reviews",
-                    active: pathname.includes("/seller/reviews"),
-                    icon: MessageCircleWarning,
-                    submenus: [],
-                },
-                {
-                    href: "/seller/questions",
-                    label: "Questions",
-                    active: pathname.includes("/seller/questions"),
+                    href: "/seller/support",
+                    label: "Support",
+                    active: pathname.includes("/seller/support"),
                     icon: MessageCircleQuestion,
                     submenus: [],
                 },

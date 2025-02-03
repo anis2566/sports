@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutGrid, LogOut, User } from "lucide-react";
+import { LayoutGrid, LogOut, ShoppingBag, Store, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -70,9 +70,21 @@ export function UserNav() {
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem className="hover:cursor-pointer" asChild>
-                        <Link href="/dashboard" className="flex items-center">
+                        <Link href="/seller" className="flex items-center">
                             <LayoutGrid className="mr-3 h-4 w-4 text-muted-foreground" />
                             Dashboard
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:cursor-pointer" asChild>
+                        <Link href="/seller/marketplace" className="flex items-center">
+                            <Store className="mr-3 h-4 w-4 text-muted-foreground" />
+                            Marketplace
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:cursor-pointer" asChild>
+                        <Link href="/seller/orders" className="flex items-center">
+                            <ShoppingBag className="mr-3 h-4 w-4 text-muted-foreground" />
+                            Orders
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem className="hover:cursor-pointer" asChild>

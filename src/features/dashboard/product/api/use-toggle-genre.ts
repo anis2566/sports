@@ -5,39 +5,46 @@ import { toast } from "sonner";
 import { client } from "@/lib/rpc";
 
 type RequestType = InferRequestType<
-    (typeof client.api.category)[":id"]["$delete"]
+    (typeof client.api.product)[":id"]["toggleGenre"]["$put"]
 >;
 type ResponseType = InferResponseType<
-    (typeof client.api.category)[":id"]["$delete"]
+    (typeof client.api.product)[":id"]["toggleGenre"]["$put"]
 >;
 
-interface Props {
+interface UseToggleGenreProps {
     onClose: () => void;
 }
 
-export const useDeleteCategory = ({ onClose }: Props) => {
+export const useToggleGenre = ({ onClose }: UseToggleGenreProps) => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation<ResponseType, Error, RequestType>({
-        mutationFn: async ({ param }) => {
-            const res = await client.api.category[":id"]["$delete"]({
+        mutationFn: async ({ json, param }) => {
+            const res = await client.api.product[":id"]["toggleGenre"]["$put"]({
+                json,
                 param: { id: param.id },
             });
             return await res.json();
         },
         onSuccess: (data) => {
             if ("success" in data) {
-                toast.success(data.success, { duration: 5000 });
-                queryClient.invalidateQueries({ queryKey: ["categories"] });
+                toast.success(data.success, {
+                    duration: 5000,
+                });
                 onClose();
+                queryClient.invalidateQueries({ queryKey: ["products"] });
             }
 
             if ("error" in data) {
-                toast.error(data.error, { duration: 5000 });
+                toast.error(data.error, {
+                    duration: 5000,
+                });
             }
         },
         onError: (error) => {
-            toast.error(error.message, { duration: 5000 });
+            toast.error(error.message, {
+                duration: 5000,
+            });
         },
     });
 

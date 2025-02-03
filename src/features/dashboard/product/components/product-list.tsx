@@ -1,16 +1,16 @@
 "use client"
 
-import { Edit, MoreVerticalIcon, Package, RefreshCcw, Trash2 } from "lucide-react"
+import { Edit, MoreVerticalIcon, Package, SquareStack, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 
 import { EmptyStat } from "@/components/empty-stat"
 import { useChangeGenre, useDeleteProduct } from "@/hooks/use-product"
@@ -86,29 +86,29 @@ export const ProductList = () => {
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon">
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button variant="ghost" size="sm">
                                                         <MoreVerticalIcon className="w-4 h-4" />
                                                     </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem asChild>
-                                                        <Link href={`/dashboard/product/edit/${product.id}`} className="flex items-center gap-x-3">
-                                                            <Edit className="w-5 h-5" />
-                                                            <p>Edit</p>
+                                                </PopoverTrigger>
+                                                <PopoverContent side="right" className="p-2 max-w-[180px]">
+                                                    <Button asChild variant="ghost" className="flex items-center justify-start gap-x-2 w-full">
+                                                        <Link href={`/dashboard/product/edit/${product.id}`} >
+                                                            <Edit className="w-4 h-4 mr-2" />
+                                                            Edit
                                                         </Link>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="flex items-center gap-x-3" onClick={() => onOpenChangeGenre(product.id, product.genre as GENRE[])}>
-                                                        <RefreshCcw className="w-5 h-5" />
-                                                        <p>Change Genre</p>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="flex items-center gap-x-3 text-rose-500 group" onClick={() => onOpen(product.id)}>
-                                                        <Trash2 className="w-5 h-5 group-hover:text-rose-600" />
-                                                        <p className="group-hover:text-rose-600">Delete</p>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                    </Button>
+                                                    <Button variant="ghost" className="flex items-center justify-start gap-x-2 w-full" onClick={() => onOpenChangeGenre(product.id, product.genre as GENRE[])}>
+                                                        <SquareStack className="w-4 h-4 mr-2" />
+                                                        Change Genre
+                                                    </Button>
+                                                    <Button variant="ghost" className="flex items-center justify-start gap-x-2 w-full text-red-500 hover:text-red-400" onClick={() => onOpen(product.id)}>
+                                                        <Trash2 className="w-4 h-4 mr-2" />
+                                                        Delete
+                                                    </Button>
+                                                </PopoverContent>
+                                            </Popover>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -133,6 +133,9 @@ export const ProductListSkeleton = () => {
                     <TableHead>Name</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Brand</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Discount Price</TableHead>
+                    <TableHead>Seller Price</TableHead>
                     <TableHead>Stock</TableHead>
                     <TableHead>Variants</TableHead>
                     <TableHead>Status</TableHead>

@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith(route)
   );
   const isAdminRoute = request.nextUrl.pathname.startsWith("/dashboard");
-  const isSellerRoute = request.nextUrl.pathname.startsWith("/seller");
+  const isSellerRoute = request.nextUrl.pathname.startsWith("/seller") && request.nextUrl.pathname !== "/seller/register";
 
   const isAdmin = user?.role === ROLE.Admin;
   const isSeller = user?.role === ROLE.Seller;
@@ -41,5 +41,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/seller/:path*"],
+  matcher: ["/dashboard/:path*", "/seller/:path*", "/user/:path*"],
 };

@@ -118,6 +118,35 @@ const app = new Hono()
             return c.json({ error: "Failed to update product" }, 500);
         }
     })
+    .put(
+        "/:id/toggleGenre",
+        isAdmin,
+        zValidator("param", z.object({ id: z.string() })),
+        zValidator("json", z.object({ genre: z.string(), status: z.boolean() })),
+        async (c) => {
+            const productId = c.req.param("id");
+            const body = c.req.valid("json");
+
+            try {
+                const product = await db.product.findUnique({ where: { id: productId } });
+
+                if (!product) {
+                    return c.json({ error: "Product not found" }, 404);
+                }
+
+                if (body.status) {
+                    await db.product.update({ where: { id: productId }, data: { genre: { push: body.genre } } });
+                } else {
+                    await db.product.update({ where: { id: productId }, data: { genre: { set: product.genre.filter((g) => g !== body.genre) } } });
+                }
+
+                return c.json({ success: "Genre toggled" });
+            } catch (error) {
+                console.log(error);
+                return c.json({ error: "Failed to toggle genre" }, 500);
+            }
+        }
+    )
     .delete(
         "/:id",
         isAdmin,

@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
 import { cors } from "hono/cors";
+import { createRouteHandler } from 'uploadthing/server';
 
 // export const runtime = "edge";
 
@@ -16,10 +17,19 @@ import questionApp from "@/server/question/route";
 import reviewApp from "@/server/review/route";
 import userApp from "@/server/user/route";
 import dashboardApp from "@/server/dashboard/route";
+import subscriberApp from "@/server/subscriber/route";
+import sellerApp from "@/server/seller/route";
+import { uploadRouter } from "@/lib/uploadthing";
+
+const handlers = createRouteHandler({
+  router: uploadRouter,
+});
+
 
 const app = new Hono()
   .basePath("/api")
   .use(cors())
+  .all("/uploadthing", (c) => handlers(c.req.raw))
   .route("/auth", authApp)
   .route("/brand", brandApp)
   .route("/category", categoryApp)
@@ -32,6 +42,8 @@ const app = new Hono()
   .route("/review", reviewApp)
   .route("/user", userApp)
   .route("/dashboard", dashboardApp)
+  .route("/subscriber", subscriberApp)
+  .route("/seller", sellerApp);
 
 export const GET = handle(app);
 export const POST = handle(app);

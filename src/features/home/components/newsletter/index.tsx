@@ -5,15 +5,16 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { useCreateSubscriber } from "@/features/home/api/use-create-subscriber";
+
 export const Newsletter = () => {
     const [email, setEmail] = useState("");
-    // const [isSubmitted, setIsSubmitted] = useState(false);
-
-    const isSubmitted = false
-    const isPending = false;
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const { mutate, isPending } = useCreateSubscriber({ setIsSubmitted });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        mutate({ email });
     };
 
     return (
@@ -23,7 +24,8 @@ export const Newsletter = () => {
                     Stay Updated with Our Newsletter
                 </h2>
                 <p className="mb-8 text-center text-gray-600">
-                    Get the latest updates, exclusive offers, and more directly in your inbox.
+                    Get the latest updates, course announcements, and exclusive offers
+                    directly in your inbox.
                 </p>
                 {!isSubmitted ? (
                     <form

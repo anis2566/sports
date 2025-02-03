@@ -16,6 +16,9 @@ import { DeleteQuestionModal } from "@/features/dashboard/question/components/de
 import { QuestionReplyModal } from "@/features/dashboard/question/components/reply-modal";
 import { UserQuestionViewModal } from "@/features/home/user/questions/components/view-modal";
 import { GenreModal } from "@/features/dashboard/product/components/genre-modal";
+import { CategoryGenreModal } from "@/features/dashboard/category/components/genre-modal";
+import { DeleteSubscriberModal } from "@/features/dashboard/subscriber/components/delete-modal";
+import { RegisterSuccessModal } from "@/features/seller/register/components/success-modal";
 
 export const ModalProvider = () => {
     return (
@@ -36,6 +39,9 @@ export const ModalProvider = () => {
             <QuestionReplyModal />
             <UserQuestionViewModal />
             <GenreModal />
+            <CategoryGenreModal />
+            <DeleteSubscriberModal />
+            <RegisterSuccessModal />
         </>
     )
 }

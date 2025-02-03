@@ -325,7 +325,8 @@ model Seller {
   businessName String
   phone     String
   email     String
-  address   String?
+  address   String
+  bio       String
   documentUrl String
   imageUrl String
   status    String @default("Pending")
@@ -378,6 +379,14 @@ model Zone {
   area   Area @relation(fields: [areaId], references: [id], onDelete: Cascade)
 
   orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscriber {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -53,7 +53,7 @@ export const BrandList = () => {
                                         </Avatar>
                                     </TableCell>
                                     <TableCell>{brand.name}</TableCell>
-                                    <TableCell>{5}</TableCell>
+                                    <TableCell>{brand.products.length}</TableCell>
                                     <TableCell>
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>

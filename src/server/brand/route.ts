@@ -154,6 +154,13 @@ const app = new Hono()
                     where: {
                         ...(query && { name: { contains: query, mode: "insensitive" } }),
                     },
+                    include: {
+                        products: {
+                            select: {
+                                id: true,
+                            },
+                        },
+                    },
                     orderBy: {
                         ...(sort === "asc" ? { createdAt: "asc" } : { createdAt: "desc" }),
                     },

@@ -7,7 +7,7 @@ import { client } from "@/lib/rpc";
 
 type ResponseType = InferResponseType<typeof client.api.auth.logout.$post>;
 
-export const useLogout = () => {
+export const useLogout = (callbackUrl?: string) => {
     const router = useRouter();
     const queryClient = useQueryClient();
 
@@ -21,7 +21,7 @@ export const useLogout = () => {
                 duration: 5000,
             });
             queryClient.invalidateQueries({ queryKey: ["current"] });
-            router.push("/");
+            router.push(callbackUrl || "/");
         },
     });
 

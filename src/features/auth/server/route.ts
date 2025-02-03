@@ -73,6 +73,7 @@ const app = new Hono()
       image: user.image,
       userId: user.id,
       role: user.role,
+      status: user.status,
       exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
     };
 
@@ -102,11 +103,11 @@ const app = new Hono()
       return c.json({ user: null }, 401);
     }
 
-    const { name, email, image, userId, role } = decodedPayload;
+    const { name, email, image, userId, role, status } = decodedPayload;
 
-    const user = { name, email, image, userId, role } as JWTPayload;
+    const user = { name, email, image, userId, role, status } as JWTPayload;
 
-    return c.json({user});
+    return c.json({ user });
   })
   .post("/logout", sessionMiddleware, async (c) => {
     deleteCookie(c, AUTH_COOKIE);

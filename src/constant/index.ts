@@ -60,6 +60,11 @@ export enum GENRE {
   ForYou = "For_You",
 }
 
+export enum CATEGORY_GENRE {
+  Featured = "Featured",
+  New = "New",
+}
+
 type UserSidebarNavs = {
   label: string;
   href: string;

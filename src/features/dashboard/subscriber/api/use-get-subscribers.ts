@@ -4,25 +4,24 @@ import { useSearchParams } from "next/navigation";
 import { client } from "@/lib/rpc";
 import { InferResponseType } from "hono";
 
-type ResponseType = InferResponseType<typeof client.api.category.$get>;
+type ResponseType = InferResponseType<typeof client.api.subscriber.$get>;
 
-export const useGetCategories = () => {
+export const useGetSubscribers = () => {
     const searchParams = useSearchParams();
     const page = searchParams.get("page") || undefined;
     const limit = searchParams.get("limit") || undefined;
     const sort = searchParams.get("sort") || undefined;
     const q = searchParams.get("query") || undefined;
-    const status = searchParams.get("status") || undefined;
 
     const query = useQuery<ResponseType>({
-        queryKey: ["categories", page, limit, sort, q, status],
+        queryKey: ["subscribers", page, limit, sort, q],
         queryFn: async () => {
-            const res = await client.api.category.$get({
-                query: { page, limit, sort, query: q, status },
+            const res = await client.api.subscriber.$get({
+                query: { page, limit, sort, query: q },
             });
             const parseData = await res.json();
             return {
-                categories: parseData.categories,
+                subscribers: parseData.subscribers,
                 totalCount: parseData.totalCount,
             };
         },

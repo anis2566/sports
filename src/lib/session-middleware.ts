@@ -4,7 +4,7 @@ import { createMiddleware } from "hono/factory";
 import { getCookie } from "hono/cookie";
 import { verify } from "hono/jwt";
 
-import { AUTH_COOKIE, ROLE } from "@/constant";
+import { AUTH_COOKIE, ROLE, STATUS } from "@/constant";
 
 export type JWTPayload = {
   name: string;
@@ -12,6 +12,7 @@ export type JWTPayload = {
   image: string | null;
   userId: string;
   role: string;
+  status: STATUS;
 };
 
 type AdditionalContext = {

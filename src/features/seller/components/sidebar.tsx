@@ -7,15 +7,15 @@ import { useMemo } from "react"
 
 import { Sidebar, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-
-import { getAdminMenuList } from "@/lib/menu-list"
 import { Logo } from "@/components/logo"
+
+import { getSellerMenuList } from "@/lib/menu-list"
 import { cn } from "@/lib/utils"
 
 export function AppSidebar() {
     const pathname = usePathname();
 
-    const menuList = useMemo(() => getAdminMenuList(pathname), [pathname])
+    const menuList = useMemo(() => getSellerMenuList(pathname), [pathname])
 
     return (
         <Sidebar collapsible="icon">

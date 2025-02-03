@@ -75,6 +75,35 @@ const app = new Hono()
             }
         }
     )
+    .put(
+        "/:id/toggleGenre",
+        isAdmin,
+        zValidator("param", z.object({ id: z.string() })),
+        zValidator("json", z.object({ genre: z.string(), status: z.boolean() })),
+        async (c) => {
+            const categoryId = c.req.param("id");
+            const body = c.req.valid("json");
+
+            try {
+                const category = await db.category.findUnique({ where: { id: categoryId } });
+
+                if (!category) {
+                    return c.json({ error: "Category not found" }, 404);
+                }
+
+                if (body.status) {
+                    await db.category.update({ where: { id: categoryId }, data: { genre: { push: body.genre } } });
+                } else {
+                    await db.category.update({ where: { id: categoryId }, data: { genre: { set: category.genre.filter((g) => g !== body.genre) } } });
+                }
+
+                return c.json({ success: "Genre toggled" });
+            } catch (error) {
+                console.log(error);
+                return c.json({ error: "Failed to toggle genre" }, 500);
+            }
+        }
+    )
     .delete(
         "/:id",
         isAdmin,
@@ -130,21 +159,21 @@ const app = new Hono()
     .get(
         "/home/featured",
         async (c) => {
-          const categories = await db.category.findMany({
-            where: {
-              status: CATEGORY_STATUS.Active,
-              // isFeatured: true,
-            },
-            orderBy: {
-              createdAt: "desc",
-            },
-            take: 10,
-          });
-          return c.json({
-            categories,
-          });
+            const categories = await db.category.findMany({
+                where: {
+                    status: CATEGORY_STATUS.Active,
+                    // isFeatured: true,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+                take: 10,
+            });
+            return c.json({
+                categories,
+            });
         }
-      )
+    )
     .get(
         "/forSelect",
         zValidator(
@@ -199,6 +228,13 @@ const app = new Hono()
                     where: {
                         ...(query && { name: { contains: query, mode: "insensitive" } }),
                         ...(status && { status: status }),
+                    },
+                    include: {
+                        products: {
+                            select: {
+                                id: true,
+                            },
+                        },
                     },
                     orderBy: {
                         ...(sort === "asc" ? { createdAt: "asc" } : { createdAt: "desc" }),

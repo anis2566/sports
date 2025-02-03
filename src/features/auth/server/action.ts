@@ -4,7 +4,7 @@ import { verify } from "hono/jwt";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-import { AUTH_COOKIE } from "@/constant";
+import { AUTH_COOKIE, STATUS } from "@/constant";
 import { JWTPayload } from "@/lib/session-middleware";
 
 export const getCurrent = cache(async () => {
@@ -26,6 +26,7 @@ export const getCurrent = cache(async () => {
     userId: decodedPayload.userId as string,
     role: decodedPayload.role as string,
     email: decodedPayload.email as string,
+    status: decodedPayload.status as STATUS,
   };
 
   return user;

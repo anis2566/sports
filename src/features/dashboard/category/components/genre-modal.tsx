@@ -4,20 +4,20 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 
-import { GENRE } from "@/constant"
-import { useChangeGenre } from "@/hooks/use-product"
+import { CATEGORY_GENRE } from "@/constant"
+import { useChangeGenre } from "@/hooks/use-category"
 import { useToggleGenre } from "../api/use-toggle-genre"
 
-export const GenreModal = () => {
-    const { isOpen, onClose, genre, productId } = useChangeGenre()
+export const CategoryGenreModal = () => {
+    const { isOpen, onClose, genre, categoryId } = useChangeGenre()
 
     const { mutate: toggleGenre, isPending } = useToggleGenre({ onClose })
 
     const handleToggleGenre = (genre: string, status: boolean) => {
-        toggleGenre({ param: { id: productId }, json: { genre, status } })
+        toggleGenre({ param: { id: categoryId }, json: { genre, status } })
     }
 
-    const inactiveGenre = Object.values(GENRE).filter((g) => !genre.includes(g))
+    const inactiveGenre = Object.values(CATEGORY_GENRE).filter((g) => !genre.includes(g))
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>

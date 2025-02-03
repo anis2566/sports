@@ -1,25 +1,26 @@
 "use client"
 
-import { Edit, MoreVerticalIcon, Trash2 } from "lucide-react"
+import { Edit, MoreVerticalIcon, SquareStack, Trash2 } from "lucide-react"
 import Link from "next/link"
 
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 
-import { CATEGORY_STATUS } from "@/constant"
+import { CATEGORY_GENRE, CATEGORY_STATUS } from "@/constant"
 import { EmptyStat } from "@/components/empty-stat"
 import { useGetCategories } from "../api/use-get-categories"
 import { CustomPagination } from "@/components/custom-pagination"
 import { Header } from "./header"
-import { useDeleteCategory } from "@/hooks/use-category"
+import { useChangeGenre, useDeleteCategory } from "@/hooks/use-category"
 
 export const CategoryList = () => {
     const { onOpen } = useDeleteCategory()
+    const { onOpen: onOpenChangeGenre } = useChangeGenre()
 
     const { data: categories, isLoading } = useGetCategories()
 
@@ -40,6 +41,7 @@ export const CategoryList = () => {
                                     <TableHead>Name</TableHead>
                                     <TableHead>Products</TableHead>
                                     <TableHead>Tags</TableHead>
+                                    <TableHead>Genre</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>Actions</TableHead>
                                 </TableRow>
@@ -54,7 +56,7 @@ export const CategoryList = () => {
                                             </Avatar>
                                         </TableCell>
                                         <TableCell>{category.name}</TableCell>
-                                        <TableCell>{5}</TableCell>
+                                        <TableCell>{category.products.length}</TableCell>
                                         <TableCell>
                                             {
                                                 category.tags.map((tag) => (
@@ -63,28 +65,39 @@ export const CategoryList = () => {
                                             }
                                         </TableCell>
                                         <TableCell>
+                                            {
+                                                category.genre.map((genre) => (
+                                                    <Badge key={genre} variant="outline" className="mr-2">{genre}</Badge>
+                                                ))
+                                            }
+                                        </TableCell>
+                                        <TableCell>
                                             <Badge className="rounded-full" variant={category.status === CATEGORY_STATUS.Active ? "default" : "destructive"}>{category.status}</Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon">
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button variant="ghost" size="sm">
                                                         <MoreVerticalIcon className="w-4 h-4" />
                                                     </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem asChild>
-                                                        <Link href={`/dashboard/category/edit/${category.id}`} className="flex items-center gap-x-3">
-                                                            <Edit className="w-5 h-5" />
-                                                            <p>Edit</p>
+                                                </PopoverTrigger>
+                                                <PopoverContent side="right" className="p-2 max-w-[180px]">
+                                                    <Button asChild variant="ghost" className="flex items-center justify-start gap-x-2 w-full">
+                                                        <Link href={`/dashboard/category/edit/${category.id}`} >
+                                                            <Edit className="w-4 h-4 mr-2" />
+                                                            Edit
                                                         </Link>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="flex items-center gap-x-3 text-rose-500 group" onClick={() => onOpen(category.id)}>
-                                                        <Trash2 className="w-5 h-5 group-hover:text-rose-600" />
-                                                        <p className="group-hover:text-rose-600">Delete</p>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                                    </Button>
+                                                    <Button variant="ghost" className="flex items-center justify-start gap-x-2 w-full" onClick={() => onOpenChangeGenre(category.id, category.genre as CATEGORY_GENRE[])}>
+                                                        <SquareStack className="w-4 h-4 mr-2" />
+                                                        Change Genre
+                                                    </Button>
+                                                    <Button variant="ghost" className="flex items-center justify-start gap-x-2 w-full text-red-500 hover:text-red-400" onClick={() => onOpen(category.id)}>
+                                                        <Trash2 className="w-4 h-4 mr-2" />
+                                                        Delete
+                                                    </Button>
+                                                </PopoverContent>
+                                            </Popover>
                                         </TableCell>
                                     </TableRow>
                                 ))}
