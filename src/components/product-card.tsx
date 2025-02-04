@@ -14,6 +14,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Skeleton } from "./ui/skeleton";
 
 import { useCart, useOpenCartModal } from "@/hooks/use-cart";
+import { useSellerCart } from "@/hooks/use-seller-cart";
 
 type CategoryWithExtended = Omit<Category, 'createdAt' | 'updatedAt'> & {
     createdAt: string;
@@ -37,29 +38,45 @@ interface ProductWithRelations extends ProductWithExtended {
 
 interface Props {
     product: ProductWithRelations;
+    priceType?: "user" | "seller"
 }
 
-export const ProductCard = ({ product }: Props) => {
-    const {addToCart} = useCart()
+export const ProductCard = ({ product, priceType = "user" }: Props) => {
+    const { addToCart } = useCart()
+    const { addToCart: addToSellerCart } = useSellerCart()
     const { onOpen } = useOpenCartModal();
 
     const handleAddToCart = () => {
-        const cartItem = {
-            product: product,
-            variant: product.variants[0],
-            color: product.variants[0].colors[0],
-            price: product.variants[0].discountPrice || product.variants[0].price,
-            quantity: 1,
+        if (priceType === "user") {
+            const cartItem = {
+                product: product,
+                variant: product.variants[0],
+                color: product.variants[0].colors[0],
+                price: product.variants[0].discountPrice || product.variants[0].price,
+                quantity: 1,
+            }
+            addToCart(cartItem)
+            toast.success("Added to cart", {
+                duration: 5000,
+            })
+            onOpen()
+        } else {
+            const cartItem = {
+                product: product,
+                variant: product.variants[0],
+                color: product.variants[0].colors[0],
+                price: product.variants[0].sellerPrice,
+                quantity: 1,
+            }
+            addToSellerCart(cartItem)
+            toast.success("Added to cart", {
+                duration: 5000,
+            })
         }
-        addToCart(cartItem)
-        toast.success("Added to cart", {
-            duration: 5000,
-        })
-        onOpen()
     }
 
     return (
-        <div className="w-full space-y-2 min-h-[380px] flex flex-col justify-between border relative">
+        <div className="w-full max-w-[250px] space-y-2 min-h-[380px] flex flex-col justify-between border relative">
             <Link href={`/products/${product.id}`} className="px-2 py-1 group h-full">
                 <div className="w-full space-y-2">
                     <div className="relative aspect-square w-full max-h-[150px]">
@@ -81,17 +98,26 @@ export const ProductCard = ({ product }: Props) => {
                                 <p className="text-sm text-red-500">Out of Stock</p>
                             )
                         }
-                        <div className="flex items-center gap-x-1">
-                            {product.variants[0].discount ? (
-                                <>
-                                <p className="tracking-wider text-base">৳{product.variants[0].discountPrice}</p>
-                                <p className="tracking-wider text-xs text-red-500 line-through">৳{product.variants[0].price}</p>
-                                <p className="text-xs text-green-500">{product.variants[0].discount}% off</p>
-                                </>
-                            ) : (
-                                <p className="tracking-wider text-base">৳{product.variants[0].price}</p>
-                            )}
-                        </div>
+                        {
+                            priceType === "user" && (
+                                <div className="flex items-center gap-x-1">
+                                    {product.variants[0].discount ? (
+                                        <>
+                                            <p className="tracking-wider text-base">৳{product.variants[0].discountPrice}</p>
+                                            <p className="tracking-wider text-xs text-red-500 line-through">৳{product.variants[0].price}</p>
+                                            <p className="text-xs text-green-500">{product.variants[0].discount}% off</p>
+                                        </>
+                                    ) : (
+                                        <p className="tracking-wider text-base">৳{product.variants[0].price}</p>
+                                    )}
+                                </div>
+                            )
+                        }
+                        {
+                            priceType === "seller" && (
+                                <p className="tracking-wider text-base">৳{product.variants[0].sellerPrice}</p>
+                            )
+                        }
                     </div>
                 </div>
             </Link>

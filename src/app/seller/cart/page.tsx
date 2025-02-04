@@ -1,14 +1,13 @@
 import Link from "next/link"
-import { Suspense } from "react"
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 import { ContentLayout } from "@/features/seller/components/content-layout"
-import { MarketplacePage } from "@/features/seller/products/components/marketplace-page"
+import { CartPage } from "@/features/seller/cart/components/cart-page"
 
-const MarketPlace = () => {
+const Cart = () => {
     return (
-        <ContentLayout title="Marketplace">
+        <ContentLayout title="Cart">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -18,16 +17,14 @@ const MarketPlace = () => {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Marketplace</BreadcrumbPage>
+                        <BreadcrumbPage>Cart</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-        
-            <Suspense fallback={<div>Loading...</div>}>
-                <MarketplacePage />
-            </Suspense>
+
+            <CartPage />
         </ContentLayout>
     )
 }
 
-export default MarketPlace
+export default Cart

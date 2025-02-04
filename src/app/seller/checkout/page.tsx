@@ -1,14 +1,13 @@
 import Link from "next/link"
-import { Suspense } from "react"
 
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 import { ContentLayout } from "@/features/seller/components/content-layout"
-import { MarketplacePage } from "@/features/seller/products/components/marketplace-page"
+import { CheckoutForm } from "@/features/seller/checkout/components/checkout-page"
 
-const MarketPlace = () => {
+const Checkout = () => {
     return (
-        <ContentLayout title="Marketplace">
+        <ContentLayout title="Checkout">
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -18,16 +17,14 @@ const MarketPlace = () => {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Marketplace</BreadcrumbPage>
+                        <BreadcrumbPage>Checkout</BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-        
-            <Suspense fallback={<div>Loading...</div>}>
-                <MarketplacePage />
-            </Suspense>
+
+            <CheckoutForm />
         </ContentLayout>
     )
 }
 
-export default MarketPlace
+export default Checkout

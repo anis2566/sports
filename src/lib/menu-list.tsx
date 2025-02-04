@@ -167,12 +167,6 @@ export function getAdminMenuList(pathname: string): Group[] {
                     icon: Users,
                     submenus: [
                         {
-                            href: "/dashboard/seller/new",
-                            label: "New",
-                            active: pathname === "/dashboard/seller/new",
-                            icon: PlusCircle,
-                        },
-                        {
                             href: "/dashboard/seller/request",
                             label: "Request",
                             active: pathname === "/dashboard/seller/request",

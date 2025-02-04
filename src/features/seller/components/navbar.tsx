@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useSidebar } from "@/components/ui/sidebar"
 
 import { UserNav } from "./user-nav";
+import { CartButton } from "./cart-button";
 
 interface NavbarProps {
     title: string;
@@ -23,6 +24,7 @@ export function Navbar({ title }: NavbarProps) {
                     <h1 className="font-bold">{title}</h1>
                 </div>
                 <div className="flex flex-1 items-center justify-end space-x-2">
+                    <CartButton />
                     {/* <Notification /> */}
                     <UserNav />
                 </div>
